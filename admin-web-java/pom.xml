@@ -1,0 +1,67 @@
+4.0.0
+    
+        org.springframework.boot
+        spring-boot-starter-parent
+        3.2.4
+         
+    
+    com.example
+    admin-web-java
+    0.0.1-SNAPSHOT
+    admin-web-java
+    
+    
+    
+        
+    
+    
+        
+    
+    
+        
+        
+        
+        
+    
+    
+        21
+    
+    
+        
+            org.springframework.boot
+            spring-boot-starter-data-jpa
+        
+        
+            org.springframework.boot
+            spring-boot-starter-web
+        
+
+        
+        
+        
+        
+            org.xerial
+            sqlite-jdbc
+        
+        
+            org.hibernate.orm
+            hibernate-community-dialects
+        
+
+        
+            org.projectlombok
+            lombok
+            true
+        
+        
+            org.springframework.boot
+            spring-boot-starter-test
+            test
+        
+    
+
+    
+        
+            
+                org.springframework.boot
+                spring-boot-maven-plugin
