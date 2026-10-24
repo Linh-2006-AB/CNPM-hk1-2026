@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phiên bản đồng bộ - VERSA Admin</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{box-sizing:border-box}body{margin:0;padding:36px;background:#0b1020;color:#edf2fa;font-family:Arial,sans-serif}
+.wrap{max-width:1200px;margin:auto}.subtitle{color:#aab5c8;line-height:1.6}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:24px 0}
+.actions{display:flex;gap:10px;flex-wrap:wrap}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border:1px solid transparent;border-radius:9px;text-decoration:none;font-size:14px;font-weight:700;cursor:pointer}
+.btn-primary{background:#5b8cff;color:#fff}.btn-secondary{background:#202b40;color:#dce5f5;border-color:#344158}.btn-danger{background:#8d3042;color:#fff}
+.card{padding:26px;border:1px solid #28334a;border-radius:16px;background:#141c2d}.table-wrapper{overflow-x:auto;border:1px solid #28334a;border-radius:12px}
+table{width:100%;border-collapse:collapse;min-width:650px}th,td{text-align:left;padding:16px;border-bottom:1px solid #28334a}th{background:#101827;color:#d5deec;font-size:13px}td{color:#edf2fa;font-size:14px}tbody tr:last-child td{border-bottom:0}.version{font-weight:800;color:#7ea5ff}.empty{text-align:center;padding:44px 20px;color:#aab5c8}.empty i{display:block;font-size:32px;margin-bottom:14px;opacity:.65}
+@media(max-width:650px){body{padding:18px}.toolbar{align-items:flex-start;flex-direction:column}.actions{width:100%}.btn{padding:9px 11px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<h1>Phiên bản đồng bộ</h1>
+<p class="subtitle">Quản lý các phiên bản cập nhật dữ liệu offline dành cho thiết bị di động.</p>
+<div class="toolbar">
+<div></div>
+<div class="actions">
+<a href="Create.html" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Đóng gói phiên bản mới</a>
+<a href="Index.html" class="btn btn-secondary" title="Tải lại"><i class="fa-solid fa-rotate-right"></i> Tải lại</a>
+</div>
+</div>
+<section class="card">
+<div class="table-wrapper">
+<table>
+<thead><tr><th>Phiên bản</th><th>Ngày tạo</th><th>Mô tả</th><th>Thao tác</th></tr></thead>
+<tbody>
+<tr>
+<td colspan="4" class="empty"><i class="fa-solid fa-code-branch"></i><em>Chưa có phiên bản đồng bộ nào trong hệ thống.</em></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</main>
+<script>
+function deleteVersion(){if(confirm('Cảnh báo: Việc xóa phiên bản đồng bộ cũ có thể ảnh hưởng đến thiết bị đang sử dụng. Bạn có chắc chắn xóa?')) alert('Đây là giao diện HTML mẫu; cần kết nối backend để xóa dữ liệu.');}
+</script>
+</body>
+</html>

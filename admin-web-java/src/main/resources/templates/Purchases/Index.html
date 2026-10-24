@@ -1,0 +1,81 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Thống kê lượt mua gói - VERSA Admin</title><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"><style>
+:root{--bg:#0b1020;--card:#141c2d;--border:#28334a;--accent:#5b8cff;--text:#edf2fa;--muted:#aab5c8;--hint:#8d9ab0}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif;font-size:14px;line-height:1.5}
+a{color:inherit;text-decoration:none}.container{max-width:1400px;margin:0 auto;padding:28px 22px 50px}
+.page-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:18px}.page-title{font-size:30px;font-weight:800;letter-spacing:-.03em}.page-subtitle{color:var(--muted);margin-top:5px;font-weight:600}.page-actions{display:flex;gap:8px;flex-wrap:wrap}
+.card,.hero{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px}.hero{background:radial-gradient(circle at top left,rgba(91,140,255,.25),transparent 40%),var(--card);margin-bottom:18px}
+.hero h1{margin:0;font-size:32px;font-weight:800}.hero p{color:var(--muted);max-width:900px;margin:9px 0 0;font-weight:600}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;padding:16px 18px;background:var(--card);border:1px solid var(--border);border-radius:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--border);border-radius:10px;padding:9px 13px;font-weight:700;cursor:pointer;background:#1a2438;color:var(--text)}.btn:hover{filter:brightness(1.12)}.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}.btn-secondary{background:#1b263b}.btn-danger{background:#6f2630;border-color:#8e3440}.btn-info{background:#173b61;border-color:#245b91}.btn-warning{background:#604b18;border-color:#80631d}.btn-sm{padding:7px 10px;font-size:12px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.form-group{display:flex;flex-direction:column;gap:7px}.form-group.full{grid-column:1/-1}label{font-weight:700}.form-control,select,textarea,input[type=date],input[type=search]{width:100%;padding:10px 12px;background:#0e1524;color:var(--text);border:1px solid #344158;border-radius:10px;outline:none}.form-control:focus,select:focus,textarea:focus,input:focus{border-color:var(--accent)}textarea{min-height:110px;resize:vertical}
+.muted{color:var(--muted)}.hint{color:var(--hint);font-size:12px}.actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px;flex-wrap:wrap}
+.grid-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}.stat{background:rgba(255,255,255,.045);border:1px solid var(--border);border-radius:14px;padding:18px}.stat-icon{width:36px;height:36px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;background:rgba(91,140,255,.14);color:#8dafff;margin-bottom:10px}.stat span{display:block;color:var(--muted);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}.stat strong{display:block;font-size:26px;margin-top:5px}.stat small{color:var(--muted);font-weight:600}
+.grid-2{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;margin-bottom:18px}.card h2{margin:0 0 5px;font-size:22px}.card>p{color:var(--muted);margin:0;font-weight:600}
+.table-wrap{overflow-x:auto}.data-table{width:100%;border-collapse:separate;border-spacing:0 9px;margin-top:12px}.data-table th{text-align:left;color:var(--muted);font-size:11px;text-transform:uppercase;padding:0 11px}.data-table td{background:rgba(255,255,255,.035);border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);padding:12px 11px;vertical-align:middle}.data-table td:first-child{border-left:1px solid rgba(255,255,255,.08);border-radius:12px 0 0 12px}.data-table td:last-child{border-right:1px solid rgba(255,255,255,.08);border-radius:0 12px 12px 0}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:800;border:1px solid var(--border);background:#1b263b}.badge.green{color:#8ff5d2;background:rgba(72,214,168,.12)}.badge.amber{color:#fde68a;background:rgba(245,158,11,.12)}.badge.red{color:#fecaca;background:rgba(239,68,68,.12)}
+.bar-list{display:grid;gap:12px;margin-top:18px}.bar-row{display:grid;grid-template-columns:70px 1fr 165px;gap:10px;align-items:center}.track{height:11px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden}.track span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#5b8cff,#48d6a8)}.track.alt span{background:linear-gradient(90deg,#a78bfa,#f472b6)}
+.empty{padding:28px;text-align:center;color:var(--muted);font-weight:700}.buyer-list{display:grid;gap:10px;margin-top:16px}.buyer{display:flex;justify-content:space-between;gap:12px;padding:13px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,.03)}.buyer small{display:block;color:var(--muted);margin-top:3px}.amount{font-weight:800;color:#6ee7d0;white-space:nowrap}
+@media(max-width:1000px){.grid-4{grid-template-columns:repeat(2,1fr)}.grid-2{grid-template-columns:1fr}}@media(max-width:700px){.container{padding:20px 14px}.page-heading{flex-direction:column}.grid-4{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.bar-row{grid-template-columns:1fr}.hero h1{font-size:26px}.table-wrap{margin:0 -4px}}
+</style></head><body><main class="container">
+<section class="hero">
+ <div class="page-heading" style="margin:0">
+  <div><h1>Thống kê lượt mua gói</h1><p>Theo dõi riêng số lượt mua của <b>Du khách</b> và <b>Chủ POI</b>, doanh thu từng nhóm, trạng thái giao dịch, gói đang hoạt động và top người mua.</p></div>
+  <div class="page-actions"><a href="Index(3).html" class="btn btn-primary"><i class="fa-solid fa-chart-pie"></i> Doanh thu tổng</a><a href="#" class="btn btn-secondary"><i class="fa-solid fa-money-check-dollar"></i> Giao dịch</a></div>
+ </div>
+ <form class="toolbar" style="margin-top:18px;background:rgba(255,255,255,.035)" onsubmit="return false">
+  <div><label>Từ ngày</label><input type="date" value="2026-10-01"></div><div><label>Đến ngày</label><input type="date" value="2026-10-24"></div>
+  <div><label>Nhóm mua</label><select><option>Tất cả</option><option>Chủ POI / Owner</option><option>Du khách</option></select></div>
+  <div><label>Trạng thái</label><select><option>Tất cả</option><option>Paid</option><option>Pending</option><option>Cancelled</option><option>Rejected/Failed</option></select></div>
+  <button class="btn btn-primary" onclick="alert('Đã lọc dữ liệu (demo).')"><i class="fa-solid fa-filter"></i> Lọc</button>
+ </form>
+</section>
+<section class="grid-4">
+ <div class="stat"><div class="stat-icon"><i class="fa-solid fa-cart-shopping"></i></div><span>Tổng lượt mua</span><strong>248</strong><small>221 đã thanh toán</small></div>
+ <div class="stat"><div class="stat-icon"><i class="fa-solid fa-store"></i></div><span>Chủ POI mua gói</span><strong>86</strong><small>79 giao dịch Paid</small></div>
+ <div class="stat"><div class="stat-icon"><i class="fa-solid fa-person-walking-luggage"></i></div><span>Du khách mua gói</span><strong>162</strong><small>142 giao dịch Paid</small></div>
+ <div class="stat"><div class="stat-icon"><i class="fa-solid fa-sack-dollar"></i></div><span>Tổng tiền đã thu</span><strong>184.500.000 VND</strong><small>Owner + Du khách</small></div>
+</section>
+<section class="grid-4">
+ <div class="stat"><span>Doanh thu Owner</span><strong>112.000.000 VND</strong><small>72 gói Owner đang hoạt động</small></div>
+ <div class="stat"><span>Doanh thu Du khách</span><strong>72.500.000 VND</strong><small>119 gói Premium đang hoạt động</small></div>
+ <div class="stat"><span>Giao dịch Pending</span><strong>14</strong><small>Cần tiếp tục thanh toán hoặc xác nhận</small></div>
+ <div class="stat"><span>Hủy / lỗi</span><strong>13</strong><small>8 hủy, 5 lỗi/từ chối</small></div>
+</section>
+<section class="grid-2">
+ <div class="card"><h2>Lượt mua 14 ngày gần đây</h2><p>Phân biệt gói Owner và gói Du khách Premium.</p><div class="bar-list">
+  <div><div class="bar-row"><strong>11/10</strong><div class="track"><span style="width:82%"></span></div><small>Owner: 8 lượt · 12.000.000 VND</small></div><div class="bar-row"><span></span><div class="track alt"><span style="width:65%"></span></div><small>Du khách: 14 lượt · 8.500.000 VND</small></div></div>
+  <div><div class="bar-row"><strong>15/10</strong><div class="track"><span style="width:58%"></span></div><small>Owner: 6 lượt · 8.000.000 VND</small></div><div class="bar-row"><span></span><div class="track alt"><span style="width:88%"></span></div><small>Du khách: 19 lượt · 10.200.000 VND</small></div></div>
+  <div><div class="bar-row"><strong>20/10</strong><div class="track"><span style="width:94%"></span></div><small>Owner: 10 lượt · 14.500.000 VND</small></div><div class="bar-row"><span></span><div class="track alt"><span style="width:72%"></span></div><small>Du khách: 16 lượt · 9.100.000 VND</small></div></div>
+  <div><div class="bar-row"><strong>24/10</strong><div class="track"><span style="width:70%"></span></div><small>Owner: 7 lượt · 10.000.000 VND</small></div><div class="bar-row"><span></span><div class="track alt"><span style="width:100%"></span></div><small>Du khách: 22 lượt · 12.800.000 VND</small></div></div>
+ </div></div>
+ <div class="card"><h2>Trạng thái giao dịch</h2><p>Tình hình thanh toán gói dịch vụ.</p><div class="grid-4" style="grid-template-columns:repeat(2,1fr);margin-top:16px">
+  <div class="stat"><span>Paid</span><strong>221</strong><small>Đã kích hoạt gói</small></div><div class="stat"><span>Pending</span><strong>14</strong><small>Đang chờ</small></div><div class="stat"><span>Cancelled</span><strong>8</strong><small>Đã hủy</small></div><div class="stat"><span>Failed</span><strong>5</strong><small>Lỗi/từ chối</small></div>
+ </div></div>
+</section>
+<section class="grid-2">
+ <div class="card"><h2>Gói Owner được mua</h2><p>Thống kê theo từng gói chủ POI.</p><div class="table-wrap"><table class="data-table"><thead><tr><th>Gói</th><th>Paid</th><th>Pending</th><th>Đang hoạt động</th><th>Doanh thu</th></tr></thead><tbody>
+ <tr><td><b>Owner Basic</b><br><small class="muted">OWNER_BASIC</small></td><td>34</td><td>3</td><td>32</td><td><b>34.000.000 VND</b></td></tr><tr><td><b>Owner Pro</b><br><small class="muted">OWNER_PRO</small></td><td>45</td><td>5</td><td>40</td><td><b>67.500.000 VND</b></td></tr>
+ </tbody></table></div></div>
+ <div class="card"><h2>Gói Du khách được mua</h2><p>Thống kê gói Premium của du khách.</p><div class="table-wrap"><table class="data-table"><thead><tr><th>Gói</th><th>Paid</th><th>Pending</th><th>Đang hoạt động</th><th>Doanh thu</th></tr></thead><tbody>
+ <tr><td><b>Premium 30 ngày</b><br><small class="muted">PREMIUM_30</small></td><td>88</td><td>7</td><td>73</td><td><b>44.000.000 VND</b></td></tr><tr><td><b>Premium 90 ngày</b><br><small class="muted">PREMIUM_90</small></td><td>54</td><td>2</td><td>46</td><td><b>28.500.000 VND</b></td></tr>
+ </tbody></table></div></div>
+</section>
+<section class="grid-2">
+ <div class="card"><h2>Top chủ POI mua gói</h2><p>Xếp theo tổng tiền đã thanh toán.</p><div class="buyer-list">
+  <div class="buyer"><div><b>Saigon Heritage</b><small>owner@saigonheritage.vn · 8 lượt mua · gần nhất 22/10/2026</small></div><div class="amount">18.000.000 VND</div></div>
+  <div class="buyer"><div><b>Viet Travel Hub</b><small>admin@viettravel.vn · 6 lượt mua · gần nhất 20/10/2026</small></div><div class="amount">14.500.000 VND</div></div>
+  <div class="buyer"><div><b>Heritage Center</b><small>manager@heritage.vn · 5 lượt mua · gần nhất 18/10/2026</small></div><div class="amount">12.000.000 VND</div></div>
+ </div></div>
+ <div class="card"><h2>Top du khách mua Premium</h2><p>Xếp theo tổng tiền đã thanh toán.</p><div class="buyer-list">
+  <div class="buyer"><div><b>Nguyễn Minh Anh</b><small>minhanh@example.com · 4 lượt mua · gần nhất 24/10/2026</small></div><div class="amount">4.800.000 VND</div></div>
+  <div class="buyer"><div><b>Trần Quốc Bảo</b><small>bao@example.com · 3 lượt mua · gần nhất 21/10/2026</small></div><div class="amount">3.600.000 VND</div></div>
+  <div class="buyer"><div><b>Lê Thu Hà</b><small>ha@example.com · 3 lượt mua · gần nhất 19/10/2026</small></div><div class="amount">3.200.000 VND</div></div>
+ </div></div>
+</section>
+<section class="card"><h2>Danh sách giao dịch gói</h2><p>Giao dịch VNPay, MoMo, miễn phí hoặc xác nhận thủ công của cả Du khách và Chủ POI.</p><div class="table-wrap"><table class="data-table"><thead><tr><th>Mã giao dịch</th><th>Người mua</th><th>Loại</th><th>Gói</th><th>Cổng</th><th>Số tiền</th><th>Trạng thái</th><th>Ngày</th></tr></thead><tbody>
+<tr><td><b>TXN-20261024-001</b><br><small class="muted">GW-001</small></td><td><b>Saigon Heritage</b><br><small class="muted">owner@example.com</small></td><td>Chủ POI</td><td>Owner Pro</td><td>VNPay</td><td><b>4.500.000 VND</b></td><td><span class="badge green">Paid</span></td><td>24/10/2026 09:25</td></tr>
+<tr><td><b>TXN-20261023-014</b><br><small class="muted">GW-014</small></td><td><b>Nguyễn Minh Anh</b><br><small class="muted">minhanh@example.com</small></td><td>Du khách</td><td>Premium 30 ngày</td><td>MoMo</td><td><b>500.000 VND</b></td><td><span class="badge green">Paid</span></td><td>23/10/2026 15:42</td></tr>
+<tr><td><b>TXN-20261023-008</b></td><td><b>Viet Travel Hub</b><br><small class="muted">admin@example.com</small></td><td>Chủ POI</td><td>Owner Pro</td><td>VNPay</td><td><b>4.500.000 VND</b></td><td><span class="badge amber">Pending</span></td><td>23/10/2026 11:08</td></tr>
+<tr><td><b>TXN-20261021-004</b></td><td><b>Lê Thu Hà</b><br><small class="muted">ha@example.com</small></td><td>Du khách</td><td>Premium 90 ngày</td><td>MoMo</td><td><b>1.200.000 VND</b></td><td><span class="badge red">Cancelled</span></td><td>21/10/2026 18:16</td></tr>
+</tbody></table></div></section>
+</main></body></html>

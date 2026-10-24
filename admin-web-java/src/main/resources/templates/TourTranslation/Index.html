@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quản lý bản dịch Tour - VERSA Admin</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{box-sizing:border-box}body{margin:0;padding:36px;background:#0b1020;color:#edf2fa;font-family:Arial,sans-serif}.wrap{max-width:1050px;margin:auto}.subtitle{color:#aab5c8}.card{margin-top:24px;padding:28px;border:1px solid #28334a;border-radius:16px;background:#141c2d}.page-title{font-size:30px;font-weight:700;margin-bottom:8px}.page-subtitle{color:#aab5c8;line-height:1.6}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}.form-group.full{grid-column:1/-1}.form-label{display:block;margin-bottom:8px;color:#d5deec;font-size:14px}.form-control{width:100%;padding:13px 14px;border:1px solid #344158;border-radius:10px;background:#0e1524;color:#edf2fa;font:inherit}.form-control:focus{outline:2px solid #5b8cff;outline-offset:1px}.form-control:disabled{opacity:.6}.hint{display:block;margin-top:7px;color:#8d9ab0;font-size:12px}.actions,.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:24px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 15px;border:1px solid transparent;border-radius:9px;text-decoration:none;font-weight:700;cursor:pointer;font-size:14px}.btn-primary{background:#5b8cff;color:white}.btn-secondary{background:#202b40;border-color:#344158;color:#edf2fa}.btn-danger{background:#572633;color:#ffb3bf;border-color:#743344}.btn-sm{padding:8px 11px;font-size:13px}.table-wrapper{margin-top:22px;overflow-x:auto;border:1px solid #28334a;border-radius:14px;background:#141c2d}.data-table{width:100%;border-collapse:collapse;min-width:650px}.data-table th,.data-table td{padding:16px;text-align:left;border-bottom:1px solid #28334a;vertical-align:top}.data-table th{background:#101829;color:#cbd6e8;font-size:13px}.data-table td{line-height:1.5}.data-table tr:last-child td{border-bottom:0}.badge{display:inline-block;padding:5px 9px;border-radius:7px;background:#203b68;color:#a9c9ff;font-weight:700;font-size:12px}.empty{text-align:center!important;padding:32px!important;color:#aab5c8}.toolbar{margin:22px 0}.note{color:#8d9ab0;font-size:12px;line-height:1.5;margin-top:7px}.page-icon{color:#5b8cff;margin-right:8px}@media(max-width:650px){body{padding:18px}.form-grid{grid-template-columns:1fr}.form-group.full{grid-column:auto}.card{padding:20px}.page-title{font-size:25px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<h1 class="page-title"><i class="fa-solid fa-language page-icon"></i>Quản lý bản dịch — Tour #1</h1>
+<p class="page-subtitle">Quản lý nội dung đa ngôn ngữ cho lộ trình Tour.</p>
+<div class="toolbar">
+<a href="#" class="btn btn-secondary btn-sm" onclick="alert('Liên kết quay lại cần được cấu hình trong ứng dụng.');return false;"><i class="fa-solid fa-arrow-left"></i> Quay lại</a>
+<a href="Create.html" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Thêm ngôn ngữ mới</a>
+</div>
+<div class="table-wrapper">
+<table class="data-table">
+<thead><tr><th>Ngôn ngữ</th><th>Tên Tour</th><th>Mô tả</th><th>Thao tác</th></tr></thead>
+<tbody id="translationsBody">
+<tr><td><span class="badge">EN</span></td><td style="font-weight:600">Sample Tour</td><td style="color:#aab5c8;font-size:13px">Description sample for this tour.</td><td><div style="display:flex;gap:8px;flex-wrap:wrap"><a href="Edit.html" class="btn btn-sm btn-secondary" title="Sửa" aria-label="Sửa"><i class="fa-solid fa-pen"></i></a><button type="button" class="btn btn-sm btn-danger delete-btn" title="Xóa" aria-label="Xóa"><i class="fa-solid fa-trash"></i></button></div></td></tr>
+<tr><td><span class="badge">VI</span></td><td style="font-weight:600">Tour mẫu</td><td style="color:#aab5c8;font-size:13px">Mô tả mẫu cho lộ trình Tour.</td><td><div style="display:flex;gap:8px;flex-wrap:wrap"><a href="Edit.html" class="btn btn-sm btn-secondary" title="Sửa" aria-label="Sửa"><i class="fa-solid fa-pen"></i></a><button type="button" class="btn btn-sm btn-danger delete-btn" title="Xóa" aria-label="Xóa"><i class="fa-solid fa-trash"></i></button></div></td></tr>
+</tbody>
+</table>
+</div>
+<p class="note">Dữ liệu trên chỉ là dữ liệu minh họa. Các thao tác thêm, sửa, xóa chưa kết nối với máy chủ.</p>
+<script>document.querySelectorAll('.delete-btn').forEach(function(btn){btn.addEventListener('click',function(){if(confirm('Xóa bản dịch này khỏi phần xem trước?')){this.closest('tr').remove();if(!document.querySelector('#translationsBody tr'))document.querySelector('#translationsBody').innerHTML='<tr><td colspan="4" class="empty">Chưa có bản dịch nào. Hãy thêm ngôn ngữ đầu tiên.</td></tr>';}})});</script>
+</main>
+</body>
+</html>

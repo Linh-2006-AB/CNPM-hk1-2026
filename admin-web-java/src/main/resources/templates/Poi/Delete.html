@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Xóa POI - VERSA Admin</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 36px;
+            background: #0b1020;
+            color: #edf2fa;
+            font-family: Arial, sans-serif;
+        }
+
+        .wrap { max-width: 850px; margin: auto; }
+
+        .subtitle {
+            color: #aab5c8;
+            line-height: 1.6;
+        }
+
+        .card {
+            margin-top: 24px;
+            padding: 28px;
+            border: 1px solid #28334a;
+            border-radius: 16px;
+            background: #141c2d;
+        }
+
+        .warning {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            padding: 18px;
+            border: 1px solid rgba(248, 113, 113, .45);
+            border-radius: 12px;
+            background: rgba(248, 113, 113, .10);
+            color: #ffabb6;
+            line-height: 1.7;
+        }
+
+        .warning-icon {
+            font-size: 22px;
+            color: #f87171;
+        }
+
+        .poi-id {
+            display: inline-block;
+            padding: 4px 9px;
+            border-radius: 7px;
+            background: #0e1524;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 24px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 16px;
+            border: 1px solid transparent;
+            border-radius: 9px;
+            font-weight: 700;
+            font-size: 14px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        .btn-danger:hover { background: #bb2d3b; }
+
+        .btn-secondary {
+            background: #202b40;
+            border-color: #344158;
+            color: #d5deec;
+        }
+
+        .btn-secondary:hover { background: #2b3850; }
+
+        @media (max-width: 650px) {
+            body { padding: 18px; }
+            .card { padding: 20px; }
+            .actions .btn { width: 100%; }
+        }
+    </style>
+</head>
+
+<body>
+<main class="wrap">
+    <h1>
+        <i class="fa-solid fa-trash-can" style="color:#f87171"></i>
+        Xóa điểm tham quan
+    </h1>
+
+    <p class="subtitle">
+        Xác nhận xóa POI khỏi hệ thống quản lý điểm tham quan.
+    </p>
+
+    <section class="card">
+        <h3>Thông tin xác nhận</h3>
+
+        <p class="subtitle">
+            Mã POI:
+            <span class="poi-id"
+                  th:text="${poi != null ? poi.id : (id != null ? id : '')}">
+                1
+            </span>
+        </p>
+
+        <div class="warning">
+            <i class="fa-solid fa-triangle-exclamation warning-icon"></i>
+            <div>
+                <strong>Cảnh báo: Thao tác không thể hoàn tác.</strong>
+                <p>
+                    Bạn có chắc chắn muốn xóa điểm tham quan này không?
+                    Theo nghiệp vụ của hệ thống gốc, thao tác xóa còn có thể
+                    xóa các bản dịch liên kết với POI.
+                </p>
+            </div>
+        </div>
+
+        <div th:if="${errorMessage}" class="warning"
+             style="margin-top:16px"
+             th:text="${errorMessage}">
+        </div>
+
+        <form th:action="${deleteAction != null ? deleteAction : '/admin/poi/delete'}"
+              method="post"
+              onsubmit="return confirm('Bạn chắc chắn muốn xóa POI này?');">
+
+            <input type="hidden" name="id"
+                   th:value="${poi != null ? poi.id : id}">
+
+            <!-- Nếu dự án bật Spring Security CSRF,
+                 hãy cấu hình token theo cơ chế hiện tại của dự án. -->
+
+            <div class="actions">
+                <button type="submit" class="btn btn-danger">
+                    <i class="fa-solid fa-trash"></i>
+                    Xác nhận xóa
+                </button>
+
+                <a th:href="${indexUrl != null ? indexUrl : '/admin/poi'}"
+                   class="btn btn-secondary">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Hủy bỏ
+                </a>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>

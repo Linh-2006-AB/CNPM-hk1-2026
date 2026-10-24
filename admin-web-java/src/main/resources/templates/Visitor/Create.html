@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thêm du khách mới - VERSA Admin</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{box-sizing:border-box}
+:root{--bg:#0b1020;--card:#141c2d;--border:#28334a;--text:#edf2fa;--muted:#aab5c8;--muted2:#8d9ab0;--accent:#5b8cff;--input:#0e1524}
+body{margin:0;padding:36px;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+.wrap{max-width:1000px;margin:0 auto}
+.page-title{font-size:30px;font-weight:700;margin:0 0 8px}
+.page-subtitle{color:var(--muted);margin:0 0 24px}
+.content{max-width:850px}
+.card{padding:28px;border:1px solid var(--border);border-radius:16px;background:var(--card)}
+.card-header{border-bottom:1px solid var(--border);padding-bottom:16px;margin-bottom:22px}
+.card-title{font-size:19px;margin:0 0 8px}
+.card-title i{color:var(--accent);margin-right:8px}
+.card-subtitle{font-size:13px;color:var(--muted);margin:0}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.form-group.full{grid-column:1/-1;margin-top:8px}
+.form-label{display:block;margin-bottom:8px;color:#d5deec;font-size:14px}
+.required{color:#ff8292}
+.input-wrap{position:relative}
+.input-wrap>i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px}
+.form-control{width:100%;padding:13px 14px 13px 38px;border:1px solid #344158;border-radius:10px;background:var(--input);color:white;font:inherit;outline:none}
+.form-control:focus{border-color:var(--accent);box-shadow:0 0 0 3px #5b8cff22}
+.password-input{padding-right:44px}
+.toggle-password{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:transparent;border:0;color:var(--muted);cursor:pointer;padding:6px}
+.toggle-password:hover{color:var(--accent)}
+.hint{display:block;margin-top:7px;color:var(--muted2);font-size:12px}
+hr{border:0;border-top:1px solid var(--border);margin:24px 0 20px}
+.actions{display:flex;gap:12px;justify-content:flex-end}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;border-radius:9px;text-decoration:none;font-weight:700;font-size:14px;cursor:pointer;border:1px solid transparent}
+.btn-secondary{background:#202b40;border-color:#344158;color:#d5deec}
+.btn-secondary:hover{background:#2a3851}
+.btn-primary{background:var(--accent);color:white}
+.btn-primary:hover{background:#4779ed}
+@media(max-width:650px){body{padding:18px}.page-title{font-size:25px}.card{padding:20px}.form-grid{grid-template-columns:1fr}.form-group.full{grid-column:auto}.actions{flex-direction:column-reverse}.btn{width:100%}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <h1 class="page-title">Thêm du khách mới</h1>
+  <p class="page-subtitle">Tạo tài khoản người dùng / du khách vào hệ thống.</p>
+
+  <div class="content">
+    <section class="card">
+      <header class="card-header">
+        <h2 class="card-title"><i class="fa-solid fa-user-plus"></i>Thông tin khởi tạo</h2>
+        <p class="card-subtitle">Nhập các thông tin cơ bản để đăng ký tài khoản mới.</p>
+      </header>
+
+      <form id="createTouristForm" autocomplete="off">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="FullName" class="form-label">Họ và Tên <span class="required">*</span></label>
+            <div class="input-wrap">
+              <i class="fa-solid fa-user"></i>
+              <input id="FullName" name="FullName" class="form-control" placeholder="Nhập họ và tên..." required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="Email" class="form-label">Email <span class="required">*</span></label>
+            <div class="input-wrap">
+              <i class="fa-solid fa-envelope"></i>
+              <input id="Email" name="Email" type="email" class="form-control" placeholder="VD: user@example.com" required>
+            </div>
+          </div>
+
+          <div class="form-group full">
+            <label for="Password" class="form-label">Mật khẩu <span class="required">*</span></label>
+            <div class="input-wrap">
+              <i class="fa-solid fa-lock"></i>
+              <input type="password" id="Password" name="Password" class="form-control password-input" autocomplete="new-password" placeholder="Nhập mật khẩu cho tài khoản..." required>
+              <button type="button" id="togglePassword" class="toggle-password" aria-label="Hiện hoặc ẩn mật khẩu" title="Hiện hoặc ẩn mật khẩu">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
+            <small class="hint">Hãy sử dụng mật khẩu đủ mạnh để bảo vệ tài khoản.</small>
+          </div>
+        </div>
+
+        <hr>
+        <div class="actions">
+          <a href="Tourists.html" class="btn btn-secondary">Hủy bỏ</a>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Tạo tài khoản</button>
+        </div>
+        <p id="formMessage" class="hint" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+  </div>
+</main>
+<script>
+const passwordInput = document.getElementById('Password');
+const toggleButton = document.getElementById('togglePassword');
+toggleButton.addEventListener('click', function () {
+  const icon = this.querySelector('i');
+  const showing = passwordInput.type === 'password';
+  passwordInput.type = showing ? 'text' : 'password';
+  icon.classList.toggle('fa-eye', !showing);
+  icon.classList.toggle('fa-eye-slash', showing);
+  this.style.color = showing ? 'var(--accent)' : 'var(--muted)';
+});
+document.getElementById('createTouristForm').addEventListener('submit', function (event) {
+  event.preventDefault();
+  document.getElementById('formMessage').textContent =
+    'Đây là bản HTML tĩnh: biểu mẫu chưa kết nối máy chủ để tạo tài khoản.';
+});
+</script>
+</body>
+</html>

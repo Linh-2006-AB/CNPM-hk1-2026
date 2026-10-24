@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tạo Tour mới - VERSA Admin</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{box-sizing:border-box}body{margin:0;padding:36px;background:#0b1020;color:#edf2fa;font-family:Arial,sans-serif}.wrap{max-width:1100px;margin:auto}.subtitle,.muted{color:#aab5c8}.card{margin-top:24px;padding:28px;border:1px solid #28334a;border-radius:16px;background:#141c2d}.grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}.full{grid-column:1/-1}.field label{display:block;margin-bottom:8px;color:#d5deec;font-size:14px}.input-wrap{position:relative}.field input,.field textarea,.field select,input,textarea,select{width:100%;padding:13px 14px;border:1px solid #344158;border-radius:10px;background:#0e1524;color:white;font:inherit}.field textarea{min-height:100px}.actions,.toolbar,.page-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:20px}.btn{display:inline-block;padding:11px 15px;border:1px solid #344158;border-radius:9px;background:#202b40;color:#edf2fa;text-decoration:none;cursor:pointer}.primary{background:#5b8cff;border-color:#5b8cff;color:white;font-weight:700}.danger{background:#451f2a;color:#ffabb6}.pill{display:inline-block;border-radius:99px;padding:6px 10px;background:#20304a;color:#bcd0ff;font-size:12px}.poi-item,.tour{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px;margin:10px 0;border:1px solid #344158;border-radius:12px;background:#0e1524}.tour-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}.tour{display:block}.tour h3{margin:12px 0}.meta{display:flex;gap:12px;flex-wrap:wrap;color:#aab5c8;font-size:13px}.hint{color:#8d9ab0;font-size:12px}h1{margin-bottom:8px}@media(max-width:650px){body{padding:18px}.grid{grid-template-columns:1fr}.full{grid-column:auto}.card{padding:20px}}
+</style></head>
+<body><main class="wrap">
+<h1>Tạo Tour mới</h1><p class="subtitle">Thiết lập thông tin cơ bản cho tour du lịch.</p>
+<section class="card"><form onsubmit="event.preventDefault(); alert('Đây là bản HTML tĩnh; dữ liệu chưa được gửi lên máy chủ.');">
+<div class="grid">
+<div class="field"><label for="title">Tên tour (Tiếng Việt)</label><input id="title" name="Title" placeholder="Ví dụ: Hành trình Di sản Hà Nội" required></div>
+<div class="field"><label for="time">Thời gian ước tính (phút)</label><input id="time" type="number" name="EstimatedTime" value="60" min="5"></div>
+<div class="field full"><label for="description">Mô tả ngắn</label><textarea id="description" name="Description" rows="4" placeholder="Tóm tắt nội dung tour"></textarea></div>
+<div class="field full"><label for="status">Trạng thái</label><select id="status" name="Status"><option value="active">Hoạt động</option><option value="draft">Bản nháp</option><option value="disabled">Đã ẩn</option></select></div>
+</div><div class="actions"><button class="btn primary" type="submit"><i class="fa-solid fa-floppy-disk"></i> Lưu tour</button><a class="btn" href="Index.html">Hủy</a></div></form></section></main></body></html>

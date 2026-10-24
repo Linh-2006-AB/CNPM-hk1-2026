@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Không có quyền truy cập</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:#0b1020;color:#e8edf7;font-family:Arial,sans-serif}.card{width:min(760px,100%);padding:42px;border:1px solid #28334a;border-radius:20px;background:#141c2d;text-align:center;box-shadow:0 20px 60px #0005}.symbol{font-size:48px;color:#fbbf24}.muted{color:#aab5c8;line-height:1.7}.actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:24px}.btn{display:inline-block;padding:11px 16px;border-radius:10px;text-decoration:none;border:1px solid #344158;color:#e8edf7;background:#202b40;cursor:pointer}.primary{background:#5b8cff;border-color:#5b8cff;color:white}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="symbol"><i class="fa-solid fa-shield-halved"></i></div>
+  <h2>Bạn không có quyền truy cập trang này</h2>
+  <p class="muted">Tài khoản hiện tại không được cấp quyền sử dụng chức năng được yêu cầu.</p>
+  <div class="actions">
+    <button class="btn" type="button" onclick="history.back()"><i class="fa-solid fa-arrow-left"></i> Quay lại</button>
+    <a class="btn primary" th:href="@{/admin/dashboard}"><i class="fa-solid fa-house"></i> Dashboard Admin</a>
+  </div>
+</main>
+</body>
+</html>

@@ -26,6 +26,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.http.HttpHeaders;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.time.Instant;
@@ -477,7 +478,8 @@ public class MultilingualMediaProcessor implements IMultilingualMediaProcessor {
         body.add("language", "vi");
         body.add("response_format", "json");
 
-        HttpEntity<>requestEntity = new HttpEntity<>(body, headers);
+        HttpEntity<MultiValueMap<String, Object>> requestEntity =
+        new HttpEntity<>(body, headers);
 
         try {
             ResponseEntity response = restTemplate.postForEntity(openAiEndpoint, requestEntity, String.class);

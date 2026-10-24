@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tài khoản du khách - VERSA Admin</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{box-sizing:border-box}
+:root{--bg:#0b1020;--panel:#141c2d;--border:#28334a;--text:#edf2fa;--muted:#aab5c8;--soft:#8d9ab0;--input:#0e1524;--blue:#5b8cff;--green:#28b889;--amber:#e6a23c;--red:#e45d70}
+body{margin:0;padding:32px;background:var(--bg);color:var(--text);font-family:Arial,sans-serif;line-height:1.5}
+.wrap{max-width:1180px;margin:auto}.page-title{font-size:28px;font-weight:800;margin:0 0 8px}.page-subtitle{color:var(--muted);margin:0 0 24px}
+.card{padding:24px;border:1px solid var(--border);border-radius:16px;background:var(--panel);margin-bottom:18px}
+.toolbar{display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap;margin:18px 0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border:1px solid transparent;border-radius:9px;background:var(--blue);color:white;text-decoration:none;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit}
+.btn-sm{padding:8px 11px;font-size:13px}.btn-secondary{background:#202b40;border-color:#344158;color:#dce5f3}.btn-danger{background:#7e2938;color:#ffdce1}.btn-primary{background:var(--blue)}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.form-group{min-width:0}.form-label{display:block;margin-bottom:8px;color:#d5deec;font-size:14px;font-weight:600}
+.form-control{width:100%;padding:12px 13px;border:1px solid #344158;border-radius:10px;background:var(--input);color:white;font:inherit;min-height:44px}
+.form-control:focus{outline:2px solid #5b8cff66;border-color:var(--blue)}.form-control:disabled{opacity:.65}.text-danger{color:#ff9eac}.hint{display:block;color:var(--soft);font-size:12px;margin-top:6px}
+.table-wrapper{width:100%;overflow-x:auto;border:1px solid var(--border);border-radius:14px;background:var(--panel)}
+.data-table{width:100%;border-collapse:collapse;min-width:760px}.data-table th,.data-table td{padding:14px 16px;text-align:left;border-bottom:1px solid #28334a;vertical-align:middle}.data-table th{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);background:#101829}.data-table tr:last-child td{border-bottom:0}.data-table td{font-size:14px}
+.badge{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}.badge.blue{background:#1c3156;color:#a9c7ff}.badge.green{background:#123c31;color:#8df0c0}.badge.amber{background:#49361b;color:#ffd28a}.badge.red{background:#451f2a;color:#ffabb6}
+.alert{padding:12px 14px;border-radius:10px;margin:12px 0}.alert-success{background:#123c31;color:#8df0c0}.alert-danger{background:#451f2a;color:#ffabb6}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}.stat-row{display:flex;gap:10px;flex-wrap:wrap}
+.note{color:var(--muted);line-height:1.7}.empty{text-align:center;padding:28px;color:var(--muted)}
+@media(max-width:680px){body{padding:16px}.page-title{font-size:23px}.card{padding:18px}.form-grid{grid-template-columns:1fr}.toolbar{align-items:stretch}.toolbar>div{max-width:100%}.toolbar .btn{margin-bottom:4px}}
+</style>
+</head>
+<body><main class="wrap">
+
+<h1 class="page-title">Quản lý tài khoản du khách</h1>
+<p class="page-subtitle">Du khách dùng bảng <code>tourists</code>, khác với tài khoản Admin/Editor/Reviewer/Owner trong bảng <code>users</code>.</p>
+<div class="toolbar"><div><a href="IndexUsers.html" class="btn btn-secondary btn-sm"><i class="fa-solid fa-user-shield"></i> Nhân sự hệ thống (4)</a> <a href="Tourists.html" class="btn btn-sm"><i class="fa-solid fa-person-walking-luggage"></i> Du khách (12)</a></div><div><a href="CreateTourist.html" class="btn btn-sm"><i class="fa-solid fa-plus"></i> Thêm du khách</a></div></div>
+<div class="card"><form id="searchForm" style="display:flex;gap:10px;flex-wrap:wrap"><input id="search" class="form-control" style="max-width:420px" type="search" placeholder="Tìm theo tên hoặc Gmail du khách..."><button class="btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i> Tìm</button><button class="btn btn-secondary" type="button" id="clearSearch">Xóa lọc</button></form></div>
+<div class="table-wrapper"><table class="data-table" id="touristTable"><thead><tr><th>Du khách</th><th>Email</th><th>Nguồn đăng nhập</th><th>Khám phá</th><th>Đơn món</th><th>Ngày tạo</th><th>Thao tác</th></tr></thead><tbody>
+<tr><td><strong>Nguyễn Minh Anh</strong></td><td>minhanh@gmail.com</td><td><span class="badge blue">Google</span></td><td>8</td><td>3</td><td>10/09/2026 11:20</td><td><div class="stat-row"><a href="EditTourist.html" class="btn btn-secondary btn-sm" title="Sửa"><i class="fa-solid fa-pen"></i></a><button type="button" class="btn btn-danger btn-sm" title="Xóa" onclick="if(confirm('Xóa tài khoản du khách này? Nếu đã có đơn hàng/giao dịch thì hệ thống có thể không cho xóa.'))alert('HTML tĩnh: chưa kết nối máy chủ.')"><i class="fa-solid fa-trash"></i></button></div></td></tr>
+<tr><td><strong>Trần Gia Hân</strong></td><td>giahan@gmail.com</td><td><span class="badge blue">Google</span></td><td>4</td><td>1</td><td>14/09/2026 16:05</td><td><div class="stat-row"><a href="EditTourist.html" class="btn btn-secondary btn-sm"><i class="fa-solid fa-pen"></i></a><button type="button" class="btn btn-danger btn-sm" onclick="if(confirm('Xóa tài khoản du khách này?'))alert('HTML tĩnh: chưa kết nối máy chủ.')"><i class="fa-solid fa-trash"></i></button></div></td></tr>
+<tr><td><strong>Lê Quốc Bảo</strong></td><td>quocbao@gmail.com</td><td><span class="badge blue">Google</span></td><td>11</td><td>5</td><td>22/09/2026 08:40</td><td><div class="stat-row"><a href="EditTourist.html" class="btn btn-secondary btn-sm"><i class="fa-solid fa-pen"></i></a><button type="button" class="btn btn-danger btn-sm" onclick="if(confirm('Xóa tài khoản du khách này?'))alert('HTML tĩnh: chưa kết nối máy chủ.')"><i class="fa-solid fa-trash"></i></button></div></td></tr>
+</tbody></table></div>
+
+</main>
+<script>
+document.querySelectorAll('form[data-demo-delete]').forEach(form=>form.addEventListener('submit',e=>{e.preventDefault();if(confirm(form.dataset.confirm || 'Xác nhận thao tác?')) alert('Đây là giao diện HTML tĩnh; chưa kết nối máy chủ để thay đổi dữ liệu.');}));
+document.querySelectorAll('form[data-demo-submit]').forEach(form=>form.addEventListener('submit',e=>{e.preventDefault();if(!form.reportValidity()) return; alert('Biểu mẫu hợp lệ. Đây là bản HTML tĩnh nên dữ liệu chưa được lưu lên máy chủ.');}));
+</script>
+
+<script>
+const search=document.getElementById('search'), table=document.getElementById('touristTable');
+document.getElementById('searchForm').addEventListener('submit',e=>{e.preventDefault();const q=search.value.trim().toLowerCase();table.querySelectorAll('tbody tr').forEach(r=>r.hidden=!r.innerText.toLowerCase().includes(q));});
+document.getElementById('clearSearch').addEventListener('click',()=>{search.value='';table.querySelectorAll('tbody tr').forEach(r=>r.hidden=false);});
+</script>
+
+</body></html>

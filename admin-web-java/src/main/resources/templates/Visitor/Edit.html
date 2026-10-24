@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cập nhật du khách - VERSA Admin</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:36px;background:#0b1020;color:#edf2fa;font-family:Arial,sans-serif}
+.wrap{max-width:1100px;margin:auto}
+.subtitle,.page-subtitle{color:#aab5c8}
+.card{margin-top:24px;padding:28px;border:1px solid #28334a;border-radius:16px;background:#141c2d}
+.page-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap;margin-bottom:20px}
+.page-title{font-size:28px;font-weight:700;margin-bottom:8px}
+.page-subtitle{font-size:14px;line-height:1.5}
+.page-actions,.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border:1px solid #344158;border-radius:9px;background:#1b263b;color:#edf2fa;text-decoration:none;cursor:pointer;font-size:14px}
+.btn-primary{background:#5b8cff;border-color:#5b8cff;color:#fff;font-weight:700}
+.btn-secondary{background:#1b263b;color:#dce5f3}
+.btn-danger{background:#8b2d3d;border-color:#a33b4d;color:#fff}
+.btn-sm{padding:7px 9px;font-size:12px}
+.toolbar{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:20px 0}
+.toolbar form{display:flex;gap:10px;flex-wrap:wrap;width:100%}
+.form-control,input,select{padding:12px 14px;border:1px solid #344158;border-radius:10px;background:#0e1524;color:#fff;font:inherit;min-width:0}
+.toolbar input{flex:1;min-width:220px}
+.table-wrapper{overflow-x:auto;border:1px solid #28334a;border-radius:14px;background:#141c2d;margin-top:20px}
+.data-table{width:100%;border-collapse:collapse;min-width:720px}
+.data-table th,.data-table td{padding:15px 16px;text-align:left;border-bottom:1px solid #28334a}
+.data-table th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#aab5c8;background:#101827}
+.data-table tbody tr:last-child td{border-bottom:0}
+small{color:#aab5c8}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;font-size:12px;background:#1e3558;color:#b9d5ff}
+.badge.green{background:#153d32;color:#8df0c0}
+.badge.blue{background:#1e3558;color:#b9d5ff}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin:22px 0}
+.stat-card{display:flex;align-items:center;gap:14px;padding:20px;border:1px solid #28334a;border-radius:14px;background:#141c2d}
+.stat-icon{font-size:23px;color:#5b8cff}
+.stat-value{font-size:26px;font-weight:700;margin-bottom:5px}
+.stat-label{font-size:13px;color:#aab5c8}
+.card-header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+.card-title{font-size:17px;font-weight:700}
+.card-subtitle{font-size:13px;color:#aab5c8;margin-top:6px}
+.empty-state{text-align:center;padding:38px 18px;color:#aab5c8}
+.empty-state i{font-size:28px;color:#5b8cff}
+.empty-state h2{color:#edf2fa;font-size:18px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.form-group label{display:block;margin-bottom:8px;color:#d5deec;font-size:14px}
+.form-group input{width:100%}
+.full{grid-column:1/-1}
+.text-danger{color:#ff9eae}
+@media(max-width:650px){body{padding:18px}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.page-title{font-size:24px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+
+<div class="page-heading"><div><div class="page-title">Cập nhật du khách</div><div class="page-subtitle">Chỉnh sửa thông tin tài khoản người dùng.</div></div></div>
+<div class="card" style="max-width:850px">
+  <div class="card-header" style="display:block;border-bottom:1px solid #28334a;padding-bottom:16px;margin-bottom:20px">
+    <div class="card-title"><i class="fa-solid fa-user-pen" style="color:#5b8cff"></i> Thông tin hồ sơ</div>
+    <p class="card-subtitle">Cập nhật dữ liệu cá nhân và bảo mật của du khách.</p>
+  </div>
+  <form id="editForm">
+    <div class="form-grid">
+      <div class="form-group"><label for="fullName">Họ và Tên <span class="text-danger">*</span></label><div style="position:relative"><i class="fa-solid fa-user" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#aab5c8;font-size:13px"></i><input id="fullName" name="fullName" class="form-control" style="padding-left:38px;width:100%" value="Nguyễn Minh Anh" required></div><span class="text-danger" id="nameError"></span></div>
+      <div class="form-group"><label for="email">Email <span class="text-danger">*</span></label><div style="position:relative"><i class="fa-solid fa-envelope" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#aab5c8;font-size:13px"></i><input id="email" name="email" type="email" class="form-control" style="padding-left:38px;width:100%" value="minh.anh@example.com" required></div><span class="text-danger" id="emailError"></span></div>
+      <div class="form-group full" style="margin-top:8px"><label for="newPassword">Mật khẩu mới</label><div style="position:relative"><i class="fa-solid fa-lock" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#aab5c8;font-size:13px"></i><input type="password" id="newPassword" name="newPassword" class="form-control" placeholder="Bỏ trống nếu không muốn đổi mật khẩu" style="padding-left:38px;padding-right:40px;width:100%"><button type="button" id="togglePassword" aria-label="Hiện/ẩn mật khẩu" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:#aab5c8;cursor:pointer;padding:4px"><i class="fa-solid fa-eye"></i></button></div><small style="display:block;margin-top:6px">Chỉ nhập khi bạn muốn thay đổi mật khẩu của du khách này.</small></div>
+    </div>
+    <div id="formMessage" role="status" style="display:none;margin-top:18px;padding:12px;border-radius:9px;background:#123c31;color:#8df0c0"></div>
+    <hr style="border-color:#28334a;margin:24px 0 20px">
+    <div style="display:flex;gap:12px;justify-content:flex-end"><a href="Index.html" class="btn btn-secondary">Hủy bỏ</a><button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Lưu cập nhật</button></div>
+  </form>
+</div>
+<script>
+document.getElementById('togglePassword').addEventListener('click',function(){const input=document.getElementById('newPassword');const icon=this.querySelector('i');const show=input.type==='password';input.type=show?'text':'password';icon.classList.toggle('fa-eye',!show);icon.classList.toggle('fa-eye-slash',show);this.style.color=show?'#5b8cff':'#aab5c8';});
+document.getElementById('editForm').addEventListener('submit',function(e){e.preventDefault();const message=document.getElementById('formMessage');message.textContent='Đã kiểm tra dữ liệu biểu mẫu. Đây là bản HTML tĩnh nên chưa lưu thay đổi lên máy chủ.';message.style.display='block';});
+</script>
+</main></body></html>

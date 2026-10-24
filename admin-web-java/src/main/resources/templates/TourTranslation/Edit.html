@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sửa bản dịch Tour - VERSA Admin</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{box-sizing:border-box}body{margin:0;padding:36px;background:#0b1020;color:#edf2fa;font-family:Arial,sans-serif}.wrap{max-width:1050px;margin:auto}.subtitle{color:#aab5c8}.card{margin-top:24px;padding:28px;border:1px solid #28334a;border-radius:16px;background:#141c2d}.page-title{font-size:30px;font-weight:700;margin-bottom:8px}.page-subtitle{color:#aab5c8;line-height:1.6}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}.form-group.full{grid-column:1/-1}.form-label{display:block;margin-bottom:8px;color:#d5deec;font-size:14px}.form-control{width:100%;padding:13px 14px;border:1px solid #344158;border-radius:10px;background:#0e1524;color:#edf2fa;font:inherit}.form-control:focus{outline:2px solid #5b8cff;outline-offset:1px}.form-control:disabled{opacity:.6}.hint{display:block;margin-top:7px;color:#8d9ab0;font-size:12px}.actions,.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:24px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 15px;border:1px solid transparent;border-radius:9px;text-decoration:none;font-weight:700;cursor:pointer;font-size:14px}.btn-primary{background:#5b8cff;color:white}.btn-secondary{background:#202b40;border-color:#344158;color:#edf2fa}.btn-danger{background:#572633;color:#ffb3bf;border-color:#743344}.btn-sm{padding:8px 11px;font-size:13px}.table-wrapper{margin-top:22px;overflow-x:auto;border:1px solid #28334a;border-radius:14px;background:#141c2d}.data-table{width:100%;border-collapse:collapse;min-width:650px}.data-table th,.data-table td{padding:16px;text-align:left;border-bottom:1px solid #28334a;vertical-align:top}.data-table th{background:#101829;color:#cbd6e8;font-size:13px}.data-table td{line-height:1.5}.data-table tr:last-child td{border-bottom:0}.badge{display:inline-block;padding:5px 9px;border-radius:7px;background:#203b68;color:#a9c9ff;font-weight:700;font-size:12px}.empty{text-align:center!important;padding:32px!important;color:#aab5c8}.toolbar{margin:22px 0}.note{color:#8d9ab0;font-size:12px;line-height:1.5;margin-top:7px}.page-icon{color:#5b8cff;margin-right:8px}@media(max-width:650px){body{padding:18px}.form-grid{grid-template-columns:1fr}.form-group.full{grid-column:auto}.card{padding:20px}.page-title{font-size:25px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<h1 class="page-title"><i class="fa-solid fa-pen-to-square page-icon"></i>Sửa bản dịch Tour</h1>
+<p class="page-subtitle">Cập nhật nội dung ngôn ngữ <strong id="languageHeading">EN</strong>.</p>
+<section class="card">
+<form id="translationForm">
+<input type="hidden" name="Id" value="1"><input type="hidden" name="TourId" value="1"><input type="hidden" name="LanguageCode" value="en">
+<div class="form-grid">
+<div class="form-group">
+<label class="form-label" for="LanguageDisplay">Ngôn ngữ</label>
+<input class="form-control" id="LanguageDisplay" type="text" value="EN" disabled>
+</div>
+<div class="form-group full">
+<label class="form-label" for="Title">Tên Tour <span style="color:#ff8b9b">*</span></label>
+<input class="form-control" id="Title" name="Title" type="text" value="Sample Tour" required>
+</div>
+<div class="form-group full">
+<label class="form-label" for="Description">Mô tả Tour</label>
+<textarea class="form-control" id="Description" name="Description" rows="5" placeholder="Nhập mô tả Tour...">Description sample for this tour.</textarea>
+</div>
+</div>
+<div class="actions" style="justify-content:flex-start">
+<button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Cập nhật</button>
+<a href="Index.html" class="btn btn-secondary">Quay lại</a>
+</div>
+<p id="formMessage" class="note" aria-live="polite"></p>
+</form>
+</section>
+<script>document.getElementById('translationForm').addEventListener('submit',function(e){e.preventDefault();document.getElementById('formMessage').textContent='Đây là bản HTML tĩnh: thay đổi chưa được lưu vào máy chủ.';});</script>
+</main>
+</body>
+</html>
