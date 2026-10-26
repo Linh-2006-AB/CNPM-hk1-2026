@@ -1,0 +1,51 @@
+<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Mã QR điểm tham quan - VERSA Admin</title><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script><style>
+*{box-sizing:border-box}html,body{margin:0;padding:0}body{min-height:100vh;padding:36px;background:#0b1020;color:#edf2fa;font-family:Arial,sans-serif}.wrap{max-width:1100px;margin:auto}.subtitle{color:#aab5c8}.card{margin-top:24px;padding:28px;border:1px solid #28334a;border-radius:16px;background:#141c2d}.card-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}.card-header{margin-bottom:18px}.card-title{font-size:18px;font-weight:700}.toolbar{display:flex;justify-content:flex-start;margin-top:22px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 15px;border:0;border-radius:9px;text-decoration:none;font-weight:700;cursor:pointer;font-size:14px}.btn-sm{padding:8px 11px;font-size:13px}.btn-primary{background:#5b8cff;color:#fff}.btn-secondary{background:#27334a;color:#edf2fa}.btn-danger{background:#b83b50;color:#fff}.data-table{width:100%;border-collapse:collapse}.data-table th,.data-table td{padding:12px 10px;text-align:left;border-bottom:1px solid #28334a}.data-table th{color:#aab5c8;font-size:13px}.badge{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:700}.badge.amber{background:#5a4320;color:#ffd78a}.form-group{margin-top:10px}.form-label{display:block;margin-bottom:8px;color:#d5deec;font-size:14px}.form-control{width:100%;padding:12px 13px;border:1px solid #344158;border-radius:10px;background:#0e1524;color:#fff;outline:none}.form-control:focus{border-color:#5b8cff;box-shadow:0 0 0 3px rgba(91,140,255,.14)}select.form-control{appearance:auto}.message{padding:12px;border-radius:9px;margin:12px 0}.empty{color:#8d9ab0}.page-title{font-size:28px;font-weight:800}.page-subtitle{margin-top:8px;color:#aab5c8}.actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}@media(max-width:700px){body{padding:18px}.card-grid{grid-template-columns:1fr}.card{padding:20px}}
+
+.qr-page{display:grid;width:100%;justify-items:center;gap:18px;padding:0}.qr-page-heading,.qr-print-card,.qr-page-footer{width:min(100%,720px)}.qr-page-heading{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;margin-top:8px}.qr-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.qr-print-card{text-align:center}.qr-brand{color:#5b8cff;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}.qr-title{margin:10px 0 6px;color:#edf2fa;font-size:28px;font-weight:800;line-height:1.25}.qr-desc{color:#aab5c8;margin:0 0 22px;font-size:15px}.qr-image-frame{display:flex;width:fit-content;max-width:100%;margin:0 auto;padding:18px;border-radius:20px;background:#fff;justify-content:center;align-items:center;overflow:hidden}.qr-image-frame img,.qr-image-frame canvas{display:block;width:300px!important;height:300px!important;image-rendering:pixelated}.qr-info{margin-top:20px;color:#aab5c8;font-size:12px}.qr-code-text{display:block;width:100%;margin-top:8px;color:#ff4d8d;background:transparent;word-break:break-all;white-space:normal;font-size:11px}.qr-page-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.qr-page-footer form{margin:0}@media print{body{background:#fff!important;padding:0}.qr-page-heading,.qr-page-footer{display:none!important}.qr-page{display:block!important}.qr-print-card{width:100%!important;box-shadow:none!important;border:0!important;color:#111!important;background:#fff!important;padding:24px!important}.qr-title,.qr-desc,.qr-info{color:#111!important}.qr-image-frame{border:1px solid #ddd}}@media(max-width:640px){body{padding:18px}.qr-print-card{padding:22px 14px}.qr-title{font-size:22px}.qr-image-frame{padding:12px}.qr-image-frame img,.qr-image-frame canvas{width:260px!important;height:260px!important}.qr-page-footer{flex-direction:column;align-items:stretch}.qr-page-footer .btn{width:100%}}
+</style></head><body><main class="wrap"><div class="qr-page"><div class="qr-page-heading"><div><div class="page-title">Mã QR điểm tham quan</div><div class="page-subtitle">In hoặc tải mã QR để du khách mở trang chi tiết POI trên web.</div></div><div class="qr-actions"><button id="downloadQr" class="btn btn-primary"><i class="fa-solid fa-download"></i> Tải PNG</button><button type="button" class="btn btn-secondary" onclick="window.print()"><i class="fa-solid fa-print"></i> In mã QR</button></div></div><section class="card qr-print-card"><div class="qr-brand">VERSA GUIDE</div><h2 class="qr-title" id="poiName"
+    th:text="${poiName}">Tên địa điểm</h2><p class="qr-desc">Quét mã để mở trang chi tiết POI trên web. QR không cộng điểm; điểm chỉ được tính khi du khách check-in bằng GPS tại địa điểm.</p><div class="qr-image-frame"><div id="qrcode"></div></div><div class="qr-info"><div>POI #<span th:text="${poiId}">1</span></div>
+<code class="qr-code-text" id="qrPayload"
+      th:text="${qrPayload}"></code>
+    </code></div></section><div class="qr-page-footer"><a href="Index.html" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Quay lại POI</a><button type="button" class="btn btn-danger" id="regenerate"><i class="fa-solid fa-rotate"></i> Tạo lại mã QR</button></div></div></main>
+<script th:inline="javascript">
+    const payload = /*[[${qrPayload}]]*/ '';
+    const poiId = /*[[${poiId}]]*/ 0;
+
+    const qrContainer = document.getElementById('qrcode');
+
+    new QRCode(qrContainer, {
+        text: payload,
+        width: 300,
+        height: 300,
+        colorDark: '#111111',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+    });
+
+    document.getElementById('qrPayload').textContent = payload;
+
+    document.getElementById('downloadQr').addEventListener('click', () => {
+        const img = qrContainer.querySelector('img');
+        const canvas = qrContainer.querySelector('canvas');
+        const src = img?.src || canvas?.toDataURL('image/png');
+
+        if (!src) {
+            alert('Chưa tạo xong mã QR. Vui lòng thử lại.');
+            return;
+        }
+
+        const link = document.createElement('a');
+        link.href = src;
+        link.download = 'poi-' + poiId + '-qr.png';
+        link.click();
+    });
+
+    document.getElementById('regenerate').addEventListener('click', () => {
+        alert(
+            'QR token hiện tại được giữ nguyên trong SQLite. ' +
+            'Tải lại trang nếu muốn tạo lại ảnh QR từ token hiện tại.'
+        );
+    });
+</script>
+</body>
+</html>
