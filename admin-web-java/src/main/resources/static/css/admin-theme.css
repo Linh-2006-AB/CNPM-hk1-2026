@@ -1,0 +1,22 @@
+/* VERSA Admin shared theme. Kept intentionally small: page-specific templates own their detailed styling. */
+:root {
+  --bg: #080b12;
+  --surface: #10182a;
+  --surface-2: #0d1526;
+  --text: #f4f7fb;
+  --text-muted: #8f96b0;
+  --border: rgba(143,150,176,.18);
+  --primary: #5b8cff;
+  --success: #3ad58b;
+  --danger: #ff6577;
+  --warning: #f5b942;
+}
+html, body { min-height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--text); }
+a { color: inherit; }
+.app-layout { min-height: 100vh; }
+.sidebar { background: var(--surface-2); border-right: 1px solid var(--border); }
+.header { background: rgba(8,11,18,.86); border-bottom: 1px solid var(--border); }
+.content { background: var(--bg); }
+.alert.success { border: 1px solid rgba(58,213,139,.25); background: rgba(58,213,139,.08); color: #c9f7e0; }
+.alert.error { border: 1px solid rgba(255,101,119,.25); background: rgba(255,101,119,.08); color: #ffd6dc; }

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nhật ký hoạt động - VERSA Admin</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{box-sizing:border-box}body{margin:0;padding:36px;background:#0b1020;color:#edf2fa;font-family:Arial,sans-serif}.wrap{max-width:1200px;margin:auto}.subtitle{color:#aab5c8}.card{margin-top:24px;padding:28px;border:1px solid #28334a;border-radius:16px;background:#141c2d}.card h3{margin-top:0}
+.toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:20px}
+.search-form{display:flex;gap:8px;align-items:center}
+.search-input{width:260px;padding:11px 16px;border:1px solid #344158;border-radius:10px;background:#0e1524;color:white;font-size:14px}
+.search-input:focus{outline:none;border-color:#5b8cff}
+.table-wrapper{overflow-x:auto}
+.data-table{width:100%;border-collapse:collapse;margin-top:10px;text-align:left}
+.data-table th{padding:14px 16px;background:#0e1524;color:#d5deec;font-size:13px;border-bottom:1px solid #28334a}
+.data-table td{padding:14px 16px;border-bottom:1px solid #28334a;font-size:14px;color:#edf2fa}
+.data-table tr:hover td{background:rgba(91, 140, 255, 0.03)}
+.badge{display:inline-block;padding:5px 10px;border-radius:8px;font-size:12px;font-weight:600}
+.badge.blue{background:rgba(91, 140, 255, 0.15);color:#5b8cff}
+.badge.amber{background:rgba(245, 158, 11, 0.15);color:#f59e0b}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border:0;border-radius:9px;text-decoration:none;cursor:pointer;font-weight:700;font-size:13px}
+.btn-secondary{background:#29364c;color:white}
+.btn-secondary:hover{background:#34445c}
+.pagination{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:24px}
+.pagination-info{display:inline-flex;align-items:center;padding:10px 16px;background:#0e1524;border:1px solid #344158;border-radius:9px;font-size:14px;color:#d5deec;font-weight:600}
+</style>
+</head>
+<body>
+<main class="wrap">
+    <h1>Nhật ký hoạt động</h1>
+    <p class="subtitle">Lịch sử tương tác và phát audio của du khách tại các điểm tham quan.</p>
+
+    <section class="card">
+        <div class="toolbar">
+            <div>
+                <form th:action="@{/usage-history}" method="get" class="search-form">
+                    <input type="text" name="searchString" th:value="${searchString}" class="search-input" placeholder="Tìm kiếm ID Thiết bị..." />
+                    <button type="submit" class="btn btn-secondary" title="Tìm kiếm"><i class="fa-solid fa-magnifying-glass"></i> Tìm kiếm</button>
+                    <a th:if="${searchString != null and !searchString.isEmpty()}" th:href="@{/usage-history}" class="btn btn-secondary" title="Xóa tìm kiếm"><i class="fa-solid fa-xmark"></i></a>
+                </form>
+            </div>
+            <div>
+                <a th:href="@{/usage-history/export}" class="btn" style="background:#123c31;color:#8df0c0;"><i class="fa-solid fa-file-excel"></i> Xuất Excel</a>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Thời gian</th>
+                        <th>Thiết bị</th>
+                        <th>Điểm tham quan</th>
+                        <th>Ngôn ngữ</th>
+                        <th>Kích hoạt</th>
+                        <th>Vị trí</th>
+                        <th>Thời lượng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${logs != null and !logs.empty}" th:each="log : ${logs}">
+                        <td style="font-size:13px;color:#aab5c8" th:text="${#temporals.format(log.createdAt, 'dd/MM/yyyy HH:mm')}">Thời gian</td>
+                        <td>
+                            <span class="badge blue" th:text="${log.deviceId == null ? 'Unknown' : (#strings.length(log.deviceId) > 8 ? #strings.substring(log.deviceId, 0, 8) : log.deviceId)}">Device</span>
+                        </td>
+                        <td th:text="${log.poiName}">Điểm tham quan</td>
+                        <td th:text="${#strings.toUpperCase(log.languageCode)}">Ngôn ngữ</td>
+                        <td><span class="badge amber" th:text="${log.triggerType}">Trigger</span></td>
+                        <td style="font-size:13px;color:#aab5c8" th:text="${log.visitorLatitude + ', ' + log.visitorLongitude}">Vị trí</td>
+                        <td th:text="${log.listenDuration + ' giây'}">Thời lượng</td>
+                    </tr>
+                    <tr th:if="${logs == null or logs.empty}">
+                        <td colspan="7" style="text-align:center;padding:32px;color:#aab5c8;">Chưa có dữ liệu nhật ký.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Phân trang -->
+        <div th:if="${totalPages != null and totalPages > 1}" class="pagination">
+            <a th:if="${currentPage > 1}" th:href="@{/usage-history(page=${currentPage - 1}, searchString=${searchString})}" class="btn btn-secondary">Trang trước</a>
+            
+            <span class="pagination-info">
+                Trang <span th:text="${currentPage}">1</span> / <span th:text="${totalPages}">1</span>
+            </span>
+            
+            <a th:if="${currentPage < totalPages}" th:href="@{/usage-history(page=${currentPage + 1}, searchString=${searchString})}" class="btn btn-secondary">Trang sau</a>
+        </div>
+    </section>
+</main>
+</body>
+</html>

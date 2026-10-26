@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title th:text="${title} + ' - VERSA Admin'">Tác vụ AI Media - VERSA Admin</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{box-sizing:border-box}body{margin:0;padding:36px;background:#0b1020;color:#edf2fa;font-family:Arial,sans-serif}.wrap{max-width:1300px;margin:auto}.subtitle{color:#aab5c8}.card{margin-top:24px;padding:28px;border:1px solid #28334a;border-radius:16px;background:#141c2d}.card h3{margin-top:0}
+.toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:20px}
+.toolbar-desc{color:#aab5c8;font-size:14px}
+.table-wrapper{overflow-x:auto}
+.data-table{width:100%;border-collapse:collapse;margin-top:10px;text-align:left}
+.data-table th{padding:14px 16px;background:#0e1524;color:#d5deec;font-size:13px;border-bottom:1px solid #28334a}
+.data-table td{padding:14px 16px;border-bottom:1px solid #28334a;font-size:14px;color:#edf2fa;vertical-align:middle}
+.data-table tr:hover td{background:rgba(91, 140, 255, 0.03)}
+.badge{display:inline-block;padding:5px 10px;border-radius:8px;font-size:12px;font-weight:600}
+.badge.green{background:rgba(18, 60, 49, 0.6);color:#8df0c0}
+.badge.amber{background:rgba(245, 158, 11, 0.15);color:#f59e0b}
+.badge.red{background:rgba(69, 31, 42, 0.6);color:#ffabb6}
+.badge.blue{background:rgba(91, 140, 255, 0.15);color:#5b8cff}
+.badge.gray{background:rgba(170, 181, 200, 0.15);color:#aab5c8}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border:0;border-radius:9px;text-decoration:none;cursor:pointer;font-weight:700;font-size:13px}
+.btn-primary{background:#5b8cff;color:white}
+.btn-primary:hover{background:#4a7be8}
+.btn-secondary{background:#29364c;color:white}
+.btn-secondary:hover{background:#34445c}
+</style>
+</head>
+<body>
+<main class="wrap">
+    <h1>Tác vụ AI Media</h1>
+    <p class="subtitle">Theo dõi tiến độ dịch thuật, tạo audio và lồng tiếng video đa ngôn ngữ.</p>
+
+    <div class="card">
+        <div class="toolbar">
+            <div class="toolbar-desc">
+                Hiển thị tối đa 100 tác vụ gần nhất. Bấm <strong>Tạo audio còn thiếu</strong> để hệ thống tạo task mới.
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                <!-- Form Tạo audio còn thiếu -->
+                <form th:action="@{${audioTasksBasePath} + '/QueueMissingTextToAudio'}" method="post" style="display:inline;">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Tạo audio còn thiếu
+                    </button>
+                </form>
+
+                <!-- Form Chạy lại toàn bộ -->
+                <form th:action="@{${audioTasksBasePath} + '/RegenerateAllTextToAudio'}" method="post" style="display:inline;"
+                      onsubmit="return confirm('Chạy lại toàn bộ audio sẽ tạo task mới cho tất cả POI. Bạn chắc chắn muốn chạy?');">
+                    <button class="btn btn-secondary" type="submit">
+                        <i class="fa-solid fa-arrows-rotate"></i> Chạy lại toàn bộ
+                    </button>
+                </form>
+
+                <!-- Nút Làm mới -->
+                <a th:href="@{${audioTasksBasePath}}" class="btn btn-secondary">
+                    <i class="fa-solid fa-rotate"></i> Làm mới
+                </a>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>POI</th>
+                        <th>Loại</th>
+                        <th>Trạng thái</th>
+                        <th>Tiến độ</th>
+                        <th>Kết quả</th>
+                        <th>Lần chạy</th>
+                        <th>Lỗi gần nhất</th>
+                        <th style="text-align:center;">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Trường hợp danh sách rỗng -->
+                    <tr th:if="${model == null or model.isEmpty()}">
+                        <td colspan="8" style="text-align:center; padding:32px; color:#aab5c8;">
+                            Không có tác vụ AI Media nào.
+                        </td>
+                    </tr>
+
+                    <!-- Duyệt qua danh sách task -->
+                    <tr th:if="${model != null and !model.isEmpty()}" th:each="task : ${model}">
+                        
+                        <!-- Lấy tên POI bằng tiếng Việt (hoặc hiển thị ID nếu không có) -->
+                        <th:block th:with="poiName=${task.poi != null && task.poi.translations != null ? task.poi.translations.stream().filter(t -> t.languageCode == 'vi').map(t -> t.name).findFirst().orElse('POI #' + task.poiId) : 'POI #' + task.poiId}">
+                            
+                            <!-- Xác định màu Badge dựa theo trạng thái -->
+                            <th:block th:with="badgeClass=${task.status.name() == 'COMPLETED' ? 'green' : (task.status.name() == 'COMPLETED_WITH_ERRORS' ? 'amber' : (task.status.name() == 'FAILED' ? 'red' : (task.status.name() == 'PROCESSING' ? 'blue' : 'gray')))}">
+                                
+                                <!-- Cột POI -->
+                                <td>
+                                    <div style="font-weight:600;" th:text="${poiName}">Tên POI</div>
+                                    <div style="font-size:12px; color:#aab5c8;" th:text="'#' + ${task.poiId}">#1</div>
+                                </td>
+
+                                <!-- Cột Loại -->
+                                <td th:text="${task.taskType}">TaskType</td>
+
+                                <!-- Cột Trạng thái -->
+                                <td><span class="badge" th:classappend="${badgeClass}" th:text="${task.status}">Status</span></td>
+
+                                <!-- Cột Tiến độ -->
+                                <td style="min-width:160px;">
+                                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+                                        <span th:text="${task.progressPercentage + '%'}">0%</span>
+                                        <span style="color:#aab5c8;" th:text="${task.updatedAt != null ? #temporals.format(task.updatedAt, 'dd/MM HH:mm') : ''}">01/01 00:00</span>
+                                    </div>
+                                    <div style="height:8px; background:#0e1524; border:1px solid #344158; border-radius:999px; overflow:hidden;">
+                                        <div style="height:100%; background:#5b8cff;" th:style="'height:100%; background:#5b8cff; width:' + ${task.progressPercentage} + '%;'"></div>
+                                    </div>
+                                </td>
+
+                                <!-- Cột Kết quả -->
+                                <td style="font-size:13px; line-height:1.5;">
+                                    <span style="color:#8df0c0;" th:text="${task.succeededLanguages + ' thành công'}">0 thành công</span><br />
+                                    <span style="color:#f59e0b;" th:text="${task.failedLanguages + ' lỗi'}">0 lỗi</span>
+                                    <span style="color:#aab5c8;" th:text="'/ ' + ${task.totalLanguages}">/ 0</span>
+                                </td>
+
+                                <!-- Cột Lần chạy -->
+                                <td th:text="${task.attemptCount}">1</td>
+
+                                <!-- Cột Lỗi gần nhất -->
+                                <td style="max-width:280px; white-space:pre-wrap; color:#aab5c8; font-size:13px;" th:text="${task.lastError != null && !task.lastError.trim().isEmpty() ? task.lastError : '-'}">-</td>
+
+                                <!-- Cột Thao tác -->
+                                <td style="text-align:center;">
+                                    <form th:if="${task.status.name() == 'FAILED' || task.status.name() == 'COMPLETED_WITH_ERROS' || task.status.name() == 'COMPLETED_WITH_ERRORS'}" 
+                                          th:action="@{${audioTasksBasePath} + '/Retry'}" method="post">
+                                        <input type="hidden" name="taskId" th:value="${task.id}" />
+                                        <button class="btn btn-secondary" type="submit" style="padding:8px 12px; font-size:12px;">
+                                            <i class="fa-solid fa-rotate-right"></i> Chạy lại
+                                        </button>
+                                    </form>
+                                </td>
+
+                            </th:block>
+                        </th:block>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<!-- Tự động làm mới trang sau 5 giây nếu có task đang chạy (Pending hoặc Processing) -->
+<script th:if="${hasActiveTasks}">
+    window.setTimeout(() => window.location.reload(), 5000);
+</script>
+</body>
+</html>

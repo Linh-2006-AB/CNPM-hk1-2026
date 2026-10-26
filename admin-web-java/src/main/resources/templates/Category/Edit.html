@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chỉnh sửa danh mục - VERSA Admin</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{box-sizing:border-box}body{margin:0;padding:36px;background:#0b1020;color:#edf2fa;font-family:Arial,sans-serif}.wrap{max-width:1200px;margin:auto}.subtitle{color:#aab5c8}
+.category-hero{position:relative;overflow:hidden;border:1px solid #28334a;border-radius:24px;padding:28px;margin-bottom:24px;background:radial-gradient(circle at 8% 16%, rgba(91, 140, 255, .15), transparent 34%),radial-gradient(circle at 92% 12%, rgba(16, 185, 129, .12), transparent 30%),#141c2d;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.category-hero-inner{position:relative;z-index:2;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center}
+.category-kicker{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;color:#8df0c0;background:rgba(18, 60, 49, 0.6);border:1px solid #28334a;font-size:12px;font-weight:700;margin-bottom:12px}
+.category-title{font-size:clamp(24px, 2.5vw, 36px);font-weight:800;letter-spacing:-.02em;line-height:1.2;margin:0;color:#edf2fa}
+.category-subtitle{max-width:760px;margin-top:8px;color:#aab5c8;font-size:14px;line-height:1.6}
+.category-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.category-layout{display:grid;grid-template-columns:minmax(0, 1fr) 360px;gap:24px;align-items:start}
+.category-card{border:1px solid #28334a;border-radius:16px;background:#141c2d;box-shadow:0 10px 30px rgba(0,0,0,.3);overflow:hidden;margin-top:0}
+.category-card-header{padding:22px 24px;border-bottom:1px solid #28334a;display:flex;justify-content:space-between;gap:16px;align-items:center}
+.category-card-title{margin:0;font-size:18px;font-weight:700;color:#edf2fa}
+.category-card-subtitle{color:#aab5c8;font-size:13px;margin-top:4px}
+.category-card-body{padding:24px}
+.category-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.category-field.full{grid-column:1 / -1}
+.category-label{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px;margin-bottom:8px;color:#d5deec}
+.category-label i{color:#5b8cff}
+.form-control,.form-select{min-height:46px;border-radius:10px;border:1px solid #344158;background:#0e1524;color:white;font-weight:600;font-size:14px;width:100%;padding:0 14px;box-sizing:border-box}
+.form-control:focus,.form-select:focus{outline:none;border-color:#5b8cff}
+.status-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;font-weight:700;font-size:12px}
+.status-active{color:#8df0c0;background:rgba(18, 60, 49, 0.6);border:1px solid rgba(18, 60, 49, 0.9)}
+.status-disabled{color:#ffabb6;background:rgba(69, 31, 42, 0.6);border:1px solid rgba(69, 31, 42, 0.9)}
+.icon-preview-card{display:grid;place-items:center;min-height:220px;border-radius:14px;border:1px dashed #344158;background:#0e1524;text-align:center;padding:24px}
+.icon-preview-img{width:90px;height:90px;border-radius:16px;object-fit:cover;border:1px solid #28334a;background:#141c2d}
+.icon-preview-empty{width:90px;height:90px;display:grid;place-items:center;border-radius:16px;color:#5b8cff;background:rgba(91, 140, 255, 0.15);font-size:32px;margin:0 auto 12px}
+.icon-preview-card strong{display:block;margin-top:12px;font-size:14px;font-weight:700;color:#edf2fa}
+.icon-preview-card p{margin:6px 0 0;color:#aab5c8;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.quick-list{display:grid;gap:10px}
+.quick-link{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;border:1px solid #28334a;background:#0e1524;font-weight:600;color:#edf2fa;text-decoration:none;transition:.2s ease}
+.quick-link:hover{background:#1a2338;border-color:#5b8cff}
+.quick-link i{color:#5b8cff}
+.info-box{padding:18px;border-radius:14px;border:1px solid #28334a;background:#0e1524}
+.info-box-icon{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;color:#5b8cff;background:rgba(91, 140, 255, 0.15);margin-bottom:10px}
+.info-box strong{display:block;font-size:14px;font-weight:700;color:#edf2fa;margin-bottom:4px}
+.info-box p{margin:0;color:#aab5c8;font-size:13px;line-height:1.5}
+.category-footer-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 16px;border:0;border-radius:9px;text-decoration:none;cursor:pointer;font-weight:700;font-size:13px}
+.btn-primary{background:#5b8cff;color:white}
+.btn-primary:hover{background:#4a7be8}
+.btn-secondary{background:#29364c;color:white}
+.btn-secondary:hover{background:#34445c}
+@media (max-width:1050px){.category-layout{grid-template-columns:1fr}.category-hero-inner{grid-template-columns:1fr}.category-actions{justify-content:flex-start}}
+</style>
+</head>
+
+<body>
+<main class="wrap">
+    <div class="category-hero">
+        <div class="category-hero-inner">
+            <div>
+                <div class="category-kicker">
+                    <i class="fa-solid fa-tags"></i> Quản lý danh mục
+                </div>
+                <h1 class="category-title">
+                    Chỉnh sửa danh mục #<span th:text="${category.id}"></span>
+                </h1>
+                <div class="category-subtitle">
+                    Cập nhật trạng thái, biểu tượng và quản lý bản dịch tên danh mục. Danh mục giúp web và app phân loại POI rõ ràng hơn.
+                </div>
+            </div>
+            <div class="category-actions">
+                <a th:href="@{/category-translations(categoryId=${category.id})}" class="btn btn-primary">
+                    <i class="fa-solid fa-language"></i> Bản dịch
+                </a>
+                <a th:href="@{/categories}" class="btn btn-secondary">
+                    <i class="fa-solid fa-arrow-left"></i> Quay lại
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="category-layout">
+        <div class="category-card">
+            <div class="category-card-header">
+                <div>
+                    <h2 class="category-card-title">Thông tin danh mục</h2>
+                    <div class="category-card-subtitle">Thiết lập hiển thị cho web du khách và app mobile.</div>
+                </div>
+                <span class="status-pill" th:classappend="${category.status != null and #strings.toLowerCase(#strings.trim(category.status)) == 'active'} ? ' status-active' : ' status-disabled'">
+                    <i class="fa-solid fa-circle"></i>
+                    <span th:text="${category.status != null and #strings.toLowerCase(#strings.trim(category.status)) == 'active' ? 'Đang hoạt động' : (category.status != null and #strings.toLowerCase(#strings.trim(category.status)) == 'disabled' ? 'Đã ẩn' : (category.status != null ? category.status : 'Chưa xác định'))}"></span>
+                </span>
+            </div>
+
+            <div class="category-card-body">
+                <form th:action="@{/categories/edit/{id}(id=${category.id})}" th:object="${category}" method="post">
+                    <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <input type="hidden" th:field="*{id}">
+
+                    <div style="color:#ffabb6; margin-bottom:16px;" th:if="${#fields.hasErrors('*')}">
+                        <p th:each="err : ${#fields.errors('*')}" th:text="${err}"></p>
+                    </div>
+
+                    <div class="category-grid">
+                        <div class="category-field">
+                            <label class="category-label">
+                                <i class="fa-solid fa-hashtag"></i> Mã danh mục
+                            </label>
+                            <input class="form-control" th:value="'#' + ${category.id}" disabled>
+                        </div>
+
+                        <div class="category-field">
+                            <label for="status" class="category-label">
+                                <i class="fa-solid fa-toggle-on"></i> Trạng thái
+                            </label>
+                            <select id="status" th:field="*{status}" class="form-select">
+                                <option value="active">Hoạt động</option>
+                                <option value="disabled">Đã ẩn</option>
+                            </select>
+                            <div style="color:#ffabb6; font-size:12px; margin-top:4px;" th:if="${#fields.hasErrors('status')}" th:errors="*{status}"></div>
+                        </div>
+
+                        <div class="category-field full">
+                            <label for="iconUrl" class="category-label">
+                                <i class="fa-solid fa-image"></i> Icon URL
+                            </label>
+                            <input id="iconUrl" th:field="*{iconUrl}" class="form-control" placeholder="Ví dụ: /uploads/icons/history.png hoặc https://..." oninput="updateIconPreview(this.value)">
+                            <div style="color:#ffabb6; font-size:12px; margin-top:4px;" th:if="${#fields.hasErrors('iconUrl')}" th:errors="*{iconUrl}"></div>
+                        </div>
+                    </div>
+
+                    <div class="info-box" style="margin-top:20px;">
+                        <div class="info-box-icon">
+                            <i class="fa-solid fa-circle-info"></i>
+                        </div>
+                        <strong>Tên danh mục là đa ngôn ngữ</strong>
+                        <p>Tên hiển thị của danh mục nên chỉnh trong mục <b>Bản dịch</b>. Khi thêm ngôn ngữ mới, hệ thống có thể dùng AI để dịch các danh mục còn thiếu.</p>
+                    </div>
+
+                    <div class="category-footer-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-solid fa-floppy-disk"></i> Lưu thay đổi
+                        </button>
+                        <a th:href="@{/category-translations(categoryId=${category.id})}" class="btn btn-secondary">
+                            <i class="fa-solid fa-language"></i> Sửa tên danh mục
+                        </a>
+                        <a th:href="@{/categories}" class="btn btn-secondary">Hủy</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <aside class="category-card">
+            <div class="category-card-header">
+                <div>
+                    <h2 class="category-card-title">Xem trước icon</h2>
+                    <div class="category-card-subtitle">Kiểm tra icon trước khi hiển thị ngoài web/app.</div>
+                </div>
+            </div>
+            <div class="category-card-body">
+                <div class="icon-preview-card">
+                    <img id="iconPreviewImage" th:if="${category.iconUrl != null and !#strings.isEmpty(#strings.trim(category.iconUrl))}" th:src="${category.iconUrl}" class="icon-preview-img" alt="Icon danh mục" onerror="this.style.display='none'; document.getElementById('iconPreviewEmpty').style.display='grid';">
+                    
+                    <div id="iconPreviewEmpty" class="icon-preview-empty" th:style="${category.iconUrl != null and !#strings.isEmpty(#strings.trim(category.iconUrl))} ? 'display:none' : 'display:grid'">
+                        <i class="fa-solid fa-tags"></i>
+                    </div>
+
+                    <strong id="iconPreviewTitle" th:text="${category.iconUrl != null and !#strings.isEmpty(#strings.trim(category.iconUrl))} ? 'Icon hiện tại' : 'Chưa có icon riêng'"></strong>
+                    <p id="iconPreviewText" th:text="${category.iconUrl != null and !#strings.isEmpty(#strings.trim(category.iconUrl)) ? category.iconUrl : 'Danh mục sẽ dùng icon mặc định cho đến khi bạn thêm URL icon.'}"></p>
+                </div>
+
+                <div class="quick-list" style="margin-top:16px;">
+                    <a th:href="@{/category-translations(categoryId=${category.id})}" class="quick-link">
+                        <i class="fa-solid fa-language"></i> Bản dịch danh mục
+                    </a>
+                    <a th:href="@{/categories}" class="quick-link">
+                        <i class="fa-solid fa-table-list"></i> Danh sách danh mục
+                    </a>
+                </div>
+            </div>
+        </aside>
+    </div>
+</main>
+
+<script>
+function updateIconPreview(url) {
+    const image = document.getElementById('iconPreviewImage');
+    const empty = document.getElementById('iconPreviewEmpty');
+    const title = document.getElementById('iconPreviewTitle');
+    const text = document.getElementById('iconPreviewText');
+    const value = (url || '').trim();
+
+    if (value) {
+        if (!image) {
+            const newImage = document.createElement('img');
+            newImage.id = 'iconPreviewImage';
+            newImage.className = 'icon-preview-img';
+            newImage.alt = 'Icon danh mục';
+            newImage.onerror = function () {
+                this.style.display = 'none';
+                empty.style.display = 'grid';
+            };
+            empty.parentNode.insertBefore(newImage, empty);
+            newImage.src = value;
+        } else {
+            image.src = value;
+            image.style.display = 'block';
+        }
+        empty.style.display = 'none';
+        title.textContent = 'Icon hiện tại';
+        text.textContent = value;
+    } else {
+        if (image) {
+            image.style.display = 'none';
+            image.removeAttribute('src');
+        }
+        empty.style.display = 'grid';
+        title.textContent = 'Chưa có icon riêng';
+        text.textContent = 'Danh mục sẽ dùng icon mặc định cho đến khi bạn thêm URL icon.';
+    }
+}
+</script>
+</body>
+</html>

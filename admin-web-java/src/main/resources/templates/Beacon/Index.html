@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quản lý thiết bị Beacon - VERSA Admin</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{box-sizing:border-box}body{margin:0;padding:36px;background:#0b1020;color:#edf2fa;font-family:Arial,sans-serif}.wrap{max-width:1200px;margin:auto}.subtitle{color:#aab5c8}.card{margin-top:24px;padding:28px;border:1px solid #28334a;border-radius:16px;background:#141c2d}.card h3{margin-top:0}
+.toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:20px}
+.table-wrapper{overflow-x:auto}
+.data-table{width:100%;border-collapse:collapse;margin-top:10px;text-align:left}
+.data-table th{padding:14px 16px;background:#0e1524;color:#d5deec;font-size:13px;border-bottom:1px solid #28334a}
+.data-table td{padding:14px 16px;border-bottom:1px solid #28334a;font-size:14px;color:#edf2fa;vertical-align:middle}
+.data-table tr:hover td{background:rgba(91, 140, 255, 0.03)}
+.badge{display:inline-block;padding:4px 8px;border-radius:8px;font-size:12px;font-weight:600}
+.badge.blue{background:rgba(91, 140, 255, 0.15);color:#5b8cff}
+.badge.green{background:rgba(18, 60, 49, 0.6);color:#8df0c0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;border:0;border-radius:9px;text-decoration:none;cursor:pointer;font-weight:700;font-size:13px}
+.btn-primary{background:#5b8cff;color:white}
+.btn-primary:hover{background:#4a7be8}
+.btn-secondary{background:#29364c;color:white}
+.btn-secondary:hover{background:#34445c}
+.btn-danger{background:#451f2a;color:#ffabb6}
+.btn-danger:hover{background:#542533}
+</style>
+</head>
+<body>
+<main class="wrap">
+    <h1>Thiết bị định vị (Beacons)</h1>
+    <p class="subtitle">Quản lý các trạm phát sóng Bluetooth tại điểm tham quan.</p>
+
+    <div class="card">
+        <!-- Thanh công cụ -->
+        <div class="toolbar">
+            <div></div>
+            <div>
+                <a th:href="@{/beacons/create}" class="btn btn-primary">
+                    <i class="fa-solid fa-plus"></i> Thêm Beacon mới
+                </a>
+            </div>
+        </div>
+
+        <!-- Bảng danh sách Beacon -->
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>UUID / MAC Address</th>
+                        <th>Major / Minor</th>
+                        <th>Điểm tham quan (POI)</th>
+                        <th>Ghi chú</th>
+                        <th style="text-align:center;">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Hiển thị danh sách khi có dữ liệu -->
+                    <th:block th:if="${beacons != null and !#lists.isEmpty(beacons)}">
+                        <tr th:each="item : ${beacons}">
+                            
+                            <!-- ID -->
+                            <td style="font-weight: bold; color: #5b8cff;" th:text="'#' + ${item.id}"></td>
+
+                            <!-- UUID và MAC -->
+                            <td>
+                                <div style="font-family: monospace; font-size: 13px;" th:text="${item.uuid}"></div>
+                                <div style="font-size: 12px; color: #aab5c8; margin-top: 3px;">
+                                    MAC: <span th:text="${item.macAddress != null ? item.macAddress : '-'}"></span>
+                                </div>
+                            </td>
+
+                            <!-- Major và Minor -->
+                            <td>
+                                <span class="badge blue">M: <span th:text="${item.major}"></span></span>
+                                <span class="badge green" style="margin-left: 4px;">m: <span th:text="${item.minor}"></span></span>
+                            </td>
+
+                            <!-- Điểm tham quan -->
+                            <td th:text="${item.poi != null ? (item.poi.name != null ? item.poi.name : 'POI #' + item.poi.id) : (item.poiId != null and item.poiId > 0 ? 'POI #' + item.poiId : 'Chưa gán')}"></td>
+
+                            <!-- Ghi chú -->
+                            <td style="font-size: 13px; color: #aab5c8;" th:text="${item.placementNote != null && !item.placementNote.isEmpty() ? item.placementNote : '-'}"></td>
+
+                            <!-- Các thao tác -->
+                            <td style="text-align:center;">
+                                <div style="display:flex; gap:8px; justify-content:center; align-items:center; flex-wrap:wrap;">
+                                    <!-- Sua Beacon -->
+                                    <a th:href="@{/beacons/edit/{id}(id=${item.id})}" class="btn btn-secondary" style="padding:8px 12px;" title="Chỉnh sửa">
+                                        <i class="fa-solid fa-pen"></i> Sửa
+                                    </a>
+
+                                    <!-- Xoa Beacon -->
+                                    <form th:action="@{/beacons/delete}" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa thiết bị này?');">
+                                        <input type="hidden" name="id" th:value="${item.id}">
+                                        <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                        <button type="submit" class="btn btn-danger" style="padding:8px 12px;" title="Xóa">
+                                            <i class="fa-solid fa-trash"></i> Xóa
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+
+                        </tr>
+                    </th:block>
+
+                    <!-- Hiển thị khi danh sách rỗng -->
+                    <tr th:if="${beacons == null or #lists.isEmpty(beacons)}">
+                        <td colspan="6" style="text-align: center; padding: 32px; color: #aab5c8;">
+                            Chưa có thiết bị Beacon nào trong hệ thống.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+</body>
+</html>

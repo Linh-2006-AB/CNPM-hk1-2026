@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thêm bản dịch Danh mục - VERSA Admin</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{box-sizing:border-box}body{margin:0;padding:36px;background:#0b1020;color:#edf2fa;font-family:Arial,sans-serif}.wrap{max-width:850px;margin:auto}.subtitle{color:#aab5c8}.card{margin-top:24px;padding:28px;border:1px solid #28334a;border-radius:16px;background:#141c2d}.card h3{margin-top:0}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.form-group{margin:0}
+.form-group.full{grid-column:span 2}
+.form-label{display:block;margin-bottom:8px;color:#d5deec;font-size:14px;font-weight:600}
+.form-control{width:100%;padding:13px 16px;border:1px solid #344158;border-radius:10px;background:#0e1524;color:white;font-size:14px}
+.form-control:focus{outline:none;border-color:#5b8cff}
+select.form-control{cursor:pointer}
+.actions{display:flex;gap:12px;justify-content:flex-end;flex-wrap:wrap;margin-top:28px}
+.btn{padding:12px 20px;border:0;border-radius:9px;text-decoration:none;cursor:pointer;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:8px}
+.btn-secondary{background:#29364c;color:white}
+.btn-secondary:hover{background:#34445c}
+.btn-primary{background:#5b8cff;color:white}
+.btn-primary:hover{background:#4a7be8}
+</style>
+</head>
+<body>
+<main class="wrap">
+    <h1>Thêm bản dịch Danh mục</h1>
+    <p class="subtitle">Thêm nội dung và ngôn ngữ mới cho Danh mục.</p>
+
+    <section class="card">
+        <form th:action="@{/category-translation/create}" method="post">
+            <input type="hidden" name="categoryId" th:value="${categoryTranslation.categoryId}">
+            <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+            <div class="form-grid">
+                <!-- Mã ngôn ngữ -->
+                <div class="form-group full">
+                    <label class="form-label">Mã ngôn ngữ *</label>
+                    <select class="form-control" name="languageCode" required>
+                        <option value="">-- Chọn ngôn ngữ --</option>
+                        <option th:each="language : ${languages}" th:value="${language.languageCode}" th:text="${language.languageName + ' (' + language.languageCode + ')'}"></option>
+                    </select>
+                    <small style="color:#aab5c8; font-size:12px; margin-top:6px; display:block;">
+                        Danh sách này lấy tự động từ Ngôn ngữ &amp; giọng đọc.
+                    </small>
+                </div>
+
+                <!-- Tên Danh mục -->
+                <div class="form-group full">
+                    <label class="form-label">Tên Danh mục *</label>
+                    <input class="form-control" type="text" name="name" th:value="${categoryTranslation.name}" required placeholder="Nhập tên danh mục theo ngôn ngữ..." />
+                </div>
+            </div>
+
+            <!-- Các nút hành động -->
+            <div class="actions">
+                <a th:href="@{/category-translation/index(categoryId=${categoryTranslation.categoryId})}" class="btn btn-secondary">
+                    <i class="fa-solid fa-arrow-left"></i> Quay lại
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-floppy-disk"></i> Lưu bản dịch
+                </button>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>

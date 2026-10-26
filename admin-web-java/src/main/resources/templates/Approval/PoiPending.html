@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title th:text="${title} + ' - VERSA Admin'">Duyệt POI - VERSA Admin</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{box-sizing:border-box}body{margin:0;padding:36px;background:#0b1020;color:#edf2fa;font-family:Arial,sans-serif}.wrap{max-width:1200px;margin:auto}.subtitle{color:#aab5c8}.card{margin-top:24px;padding:28px;border:1px solid #28334a;border-radius:16px;background:#141c2d}.card h3{margin-top:0}
+.table-wrapper{overflow-x:auto}
+.data-table{width:100%;border-collapse:collapse;margin-top:10px;text-align:left}
+.data-table th{padding:14px 16px;background:#0e1524;color:#d5deec;font-size:13px;border-bottom:1px solid #28334a}
+.data-table td{padding:14px 16px;border-bottom:1px solid #28334a;font-size:14px;color:#edf2fa;vertical-align:middle}
+.data-table tr:hover td{background:rgba(91, 140, 255, 0.03)}
+.input-text{width:220px;padding:10px 14px;border:1px solid #344158;border-radius:9px;background:#0e1524;color:white;font-size:13px}
+.input-text:focus{outline:none;border-color:#5b8cff}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 14px;border:0;border-radius:9px;text-decoration:none;cursor:pointer;font-weight:700;font-size:13px}
+.btn-primary{background:#5b8cff;color:white}
+.btn-primary:hover{background:#4a7be8}
+.btn-danger{background:#451f2a;color:#ffabb6}
+.btn-danger:hover{background:#542533}
+</style>
+</head>
+<body>
+<main class="wrap">
+    <h1>POI chờ kiểm duyệt</h1>
+    <p class="subtitle">Kiểm tra nội dung điểm tham quan trước khi phê duyệt xuất bản.</p>
+
+    <div class="card">
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên địa điểm</th>
+                        <th>Tọa độ</th>
+                        <th>Bán kính</th>
+                        <th>Ghi chú trước đó</th>
+                        <th style="text-align:center;">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Kiểm tra model != null và không rỗng, sau đó duyệt vòng lặp foreach -->
+                    <tr th:if="${model != null and !model.isEmpty()}" th:each="poi : ${model}">
+                        <!-- Lấy translation có LanguageCode == "vi" -->
+                        <th:block th:with="vi=${poi.translations != null ? poi.translations.stream().filter(t -> t.languageCode == 'vi').findFirst().orElse(null) : null}">
+                            
+                            <td style="font-weight: bold; color: #5b8cff;" th:text="'#' + ${poi.id}">#1</td>
+                            <td style="font-weight: 600;" th:text="${vi != null && vi.name != null ? vi.name : 'POI #' + poi.id}">Tên địa điểm</td>
+                            <td style="font-family: monospace; font-size: 13px; color: #aab5c8;" th:text="${poi.latitude + ', ' + poi.longitude}">0.0, 0.0</td>
+                            <td th:text="${poi.radius + ' m'}">0 m</td>
+                            
+                            <td>
+                                <span style="color:#aab5c8;" th:if="${poi.adminNote != null and !poi.adminNote.trim().isEmpty()}" th:text="${poi.adminNote}">Ghi chú</span>
+                                <span style="color:#aab5c8;" th:unless="${poi.adminNote != null and !poi.adminNote.trim().isEmpty()}">-</span>
+                            </td>
+                            
+                            <td>
+                                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                                    <!-- Form Approve -->
+                                    <form th:action="@{/approval/poi-approve/{id}(id=${poi.id})}" method="post" style="display:inline;">
+                                        <button type="submit" class="btn btn-primary" title="Phê duyệt">
+                                            <i class="fa-solid fa-check"></i> Duyệt
+                                        </button>
+                                    </form>
+
+                                    <!-- Form Reject -->
+                                    <form th:action="@{/approval/poi-reject/{id}(id=${poi.id})}" method="post" style="display:inline; display:flex; gap:6px; align-items:center;">
+                                        <input type="text" name="adminNote" class="input-text" placeholder="Lý do từ chối..." required />
+                                        <button type="submit" class="btn btn-danger" title="Từ chối">
+                                            <i class="fa-solid fa-xmark"></i> Từ chối
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+
+                        </th:block>
+                    </tr>
+
+                    <!-- Trường hợp danh sách rỗng -->
+                    <tr th:if="${model == null or model.isEmpty()}">
+                        <td colspan="6" style="text-align:center; padding:32px; color:#aab5c8;">
+                            Không có POI đang chờ kiểm duyệt.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+</body>
+</html>

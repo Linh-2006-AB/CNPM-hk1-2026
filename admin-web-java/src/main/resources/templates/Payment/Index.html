@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thanh toán & doanh thu - VERSA Admin</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{box-sizing:border-box}body{margin:0;padding:36px;background:#0b1020;color:#edf2fa;font-family:Arial,sans-serif}.wrap{max-width:1400px;margin:auto}.subtitle{color:#aab5c8}
+.page-heading{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:24px}
+.stats-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:24px}
+.stat-card{border:1px solid #28334a;border-radius:16px;padding:20px;background:#141c2d;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.stat-card span{display:block;color:#aab5c8;font-size:13px;font-weight:600;margin-bottom:8px}
+.stat-card strong{display:block;color:#edf2fa;font-size:32px;font-weight:800}
+.card{border:1px solid #28334a;border-radius:16px;background:#141c2d;box-shadow:0 10px 30px rgba(0,0,0,.3);overflow:hidden}
+.table-wrapper{overflow-x:auto}
+.data-table{width:100%;border-collapse:collapse;text-align:left}
+.data-table th{padding:14px 16px;background:#0e1524;color:#d5deec;font-size:13px;border-bottom:1px solid #28334a}
+.data-table td{padding:14px 16px;border-bottom:1px solid #28334a;font-size:14px;color:#edf2fa;vertical-align:middle}
+.data-table tr:hover td{background:rgba(91, 140, 255, 0.03)}
+.badge{display:inline-block;padding:5px 10px;border-radius:8px;font-size:12px;font-weight:600}
+.badge.green{background:rgba(18, 60, 49, 0.6);color:#8df0c0;border:1px solid rgba(18, 60, 49, 0.9)}
+.badge.yellow{background:rgba(64, 53, 20, 0.6);color:#fde047;border:1px solid rgba(64, 53, 20, 0.9)}
+.badge.red{background:rgba(69, 31, 42, 0.6);color:#ffabb6;border:1px solid rgba(69, 31, 42, 0.9)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border:0;border-radius:9px;text-decoration:none;cursor:pointer;font-weight:700;font-size:13px}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-primary{background:#5b8cff;color:white}
+.btn-primary:hover{background:#4a7be8}
+.btn-danger{background:#451f2a;color:#ffabb6;border:1px solid rgba(244,63,94,0.3)}
+.btn-danger:hover{background:#542533}
+@media (max-width:1024px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){.stats-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<main class="wrap">
+    <div class="page-heading">
+        <div>
+            <h1 style="margin:0 0 8px; font-size:28px; font-weight:800;">Thanh toán & doanh thu</h1>
+            <p class="subtitle" style="margin:0;">Theo dõi giao dịch chủ gian hàng và người dùng. Bản này dùng thanh toán giả lập/manual.</p>
+        </div>
+    </div>
+
+    <!-- Khung thống kê doanh thu -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <span>Doanh thu đã thu</span>
+            <strong style="color:#8df0c0;" th:text="${totalRevenue != null ? #numbers.formatDecimal(totalRevenue, 0, 'COMMA', 0, 'POINT') + ' đ' : '0 đ'}">0 đ</strong>
+        </div>
+        <div class="stat-card">
+            <span>Giao dịch chờ xác nhận</span>
+            <strong style="color:#fde047;" th:text="${pendingCount}">0</strong>
+        </div>
+        <div class="stat-card">
+            <span>Tổng giao dịch</span>
+            <strong th:text="${paymentTransactions != null ? paymentTransactions.size() : 0}">0</strong>
+        </div>
+    </div>
+
+    <!-- Bảng danh sách giao dịch -->
+    <div class="card">
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th style="width: 130px;">Mã GD</th>
+                        <th>Người trả</th>
+                        <th>Gói</th>
+                        <th>Số tiền</th>
+                        <th>Mục đích</th>
+                        <th style="width: 150px;">Ngày tạo</th>
+                        <th style="width: 120px;">Trạng thái</th>
+                        <th style="text-align:center; width: 220px;">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${paymentTransactions != null and not #lists.isEmpty(paymentTransactions)}" th:each="payment : ${paymentTransactions}">
+                        <td><code style="background:#0e1524; padding:3px 8px; border-radius:6px; border:1px solid #344158; color:#8df0c0; font-family:monospace;" th:text="${payment.transactionCode}">TXN001</code></td>
+                        <td>
+                            <span class="badge" style="background:rgba(91,140,255,0.12); color:#5b8cff; border:1px solid rgba(91,140,255,0.24); margin-bottom:4px;" th:text="${payment.payerType}">Owner</span><br />
+                            <strong style="color:#edf2fa; font-size:14px;" th:text="${payment.payerType == 'Owner' ? (payment.ownerProfile != null ? payment.ownerProfile.businessName : '') : (payment.tourist != null ? (payment.tourist.fullName != null ? payment.tourist.fullName : payment.tourist.email) : '')}">Payer</strong>
+                        </td>
+                        <td>
+                            <strong style="color:#edf2fa;" th:text="${payment.paymentPlan != null ? payment.paymentPlan.planName : '-'}">Plan Name</strong>
+                        </td>
+                        <td>
+                            <strong style="color:#8df0c0;" th:text="${#numbers.formatDecimal(payment.amount, 0, 'COMMA', 0, 'POINT')} + ' ' + ${payment.currency}">0 VND</strong>
+                        </td>
+                        <td>
+                            <span style="font-weight:600; color:#edf2fa;" th:text="${payment.purpose}">Purpose</span><br />
+                            <small style="color:#aab5c8;" th:text="${payment.note}">Note</small>
+                        </td>
+                        <td style="color:#aab5c8; font-size:13px;" th:text="${#temporals.format(payment.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2026 00:00</td>
+                        <td>
+                            <span class="badge" th:classappend="${payment.status == 'Paid' ? ' green' : (payment.status == 'Pending' ? ' yellow' : ' red')}" 
+                                  th:text="${payment.status}">Status</span>
+                        </td>
+                        <td style="text-align:center;">
+                            <div th:if="${payment.status == 'Pending'}" style="display:flex; gap:6px; justify-content:center; align-items:center; flex-wrap:wrap;">
+                                <form th:action="@{/admin/payment/confirm}" method="post" style="display:inline; margin:0;">
+                                    <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                    <input type="hidden" name="id" th:value="${payment.id}" />
+                                    <button type="submit" class="btn btn-sm btn-primary" title="Xác nhận thu tiền">
+                                        <i class="fa-solid fa-check"></i> Xác nhận
+                                    </button>
+                                </form>
+                                <form th:action="@{/admin/payment/reject}" method="post" style="display:inline; margin:0;" onsubmit="return confirm('Từ chối giao dịch thanh toán này?');">
+                                    <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                    <input type="hidden" name="id" th:value="${payment.id}" />
+                                    <button type="submit" class="btn btn-sm btn-danger" title="Từ chối giao dịch">
+                                        <i class="fa-solid fa-xmark"></i> Từ chối
+                                    </button>
+                                </form>
+                            </div>
+                            <div th:unless="${payment.status == 'Pending'}">
+                                <small style="color:#aab5c8;">Đã xử lý</small>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Trường hợp danh sách trống -->
+                    <tr th:if="${paymentTransactions == null or #lists.isEmpty(paymentTransactions)}">
+                        <td colspan="8" style="text-align:center; padding:48px 20px; color:#aab5c8;">
+                            Chưa có giao dịch thanh toán nào trong hệ thống.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

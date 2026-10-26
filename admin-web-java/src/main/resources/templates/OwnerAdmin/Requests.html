@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<title>Yêu cầu POI của chủ gian hàng - VERSA Admin</title>
+
+<style>
+:root{--bg:#080b12;--surface:#0f1420;--surface2:#151c2b;--text:#f4f7fb;--text-muted:#a8b3c7;--text2:#a8b3c7;--border:rgba(148,163,184,.16);--primary:#5b8cff;--shadow:0 20px 55px rgba(0,0,0,.22)}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 10%,#183363,transparent 35%),radial-gradient(circle at 90% 90%,#30205d,transparent 32%),var(--bg);color:var(--text);font-family:"Be Vietnam Pro",sans-serif}
+a{color:#9bbcff}button,input,select,textarea{font:inherit}.admin-shell{width:min(1500px,100%);margin:0 auto;padding:28px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:24px;padding:16px 20px;border:1px solid var(--border);border-radius:18px;background:rgba(15,20,32,.92)}.brand{display:flex;align-items:center;gap:12px}.brand-icon{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,#5b8cff,#8b5cf6)}.brand strong{display:block}.brand small{color:var(--text-muted)}.page-content{min-width:0}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:#151c2b;color:#e7eefb;text-decoration:none;font-size:12px;font-weight:700;cursor:pointer}.btn-primary{background:#5b8cff;border-color:#5b8cff;color:#fff}.btn-danger{background:#9f3046;border-color:#9f3046;color:#fff}.btn-secondary{background:rgba(148,163,184,.08)}.btn-sm{padding:7px 10px;font-size:11px}.form-control{width:100%;padding:11px 12px;border:1px solid var(--border);border-radius:10px;background:#151c2b;color:var(--text);outline:none}.form-control:focus{border-color:#5b8cff;box-shadow:0 0 0 3px rgba(91,140,255,.13)}.form-control-sm{padding:7px 9px;font-size:12px}.page-heading{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:22px}.page-title{font-size:clamp(24px,3vw,36px);font-weight:800;letter-spacing:-.04em}.page-subtitle{margin-top:6px;color:var(--text-muted);font-size:13px}.page-actions{display:flex;gap:8px;flex-wrap:wrap}.stats-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.stat-card,.panel-card,.data-table{border:1px solid var(--border);border-radius:16px;background:rgba(15,20,32,.92);box-shadow:var(--shadow)}.stat-card{padding:18px}.stat-card span{display:block;color:var(--text-muted);font-size:12px}.stat-card strong{display:block;margin-top:8px;font-size:26px}.toolbar{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.table-wrapper{overflow:auto}.data-table{width:100%;border-collapse:collapse}.data-table th,.data-table td{padding:13px 14px;text-align:left;border-bottom:1px solid var(--border);font-size:12px;vertical-align:top}.data-table th{color:#a8b3c7;font-weight:700;background:rgba(148,163,184,.05);white-space:nowrap}.data-table tr:last-child td{border-bottom:0}.badge{display:inline-flex;align-items:center;padding:5px 9px;border-radius:999px;font-size:10px;font-weight:800;background:rgba(91,140,255,.14);color:#a9c3ff}.badge.green{background:rgba(58,213,139,.13);color:#6ee7b7}.badge.red{background:rgba(255,101,119,.13);color:#ff8b99}.badge.yellow{background:rgba(245,185,66,.13);color:#fcd34d}.field-validation-error{display:block;color:#ff8b99;font-size:11px;margin-top:5px}
+@media(max-width:900px){.admin-shell{padding:16px}.stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.page-heading{align-items:flex-start;flex-direction:column}}
+@media(max-width:560px){.admin-shell{padding:10px}.stats-grid{grid-template-columns:1fr}.topbar{padding:12px}.data-table th,.data-table td{padding:10px}}
+
+</style>
+</head><body><div class="admin-shell"><header class="topbar"><div class="brand"><span class="brand-icon"><i class="fa-solid fa-compass"></i></span><span><strong>VERSA Admin</strong><small>Cổng quản trị hệ thống</small></span></div><a class="btn btn-secondary" th:href="@{/admin}"><i class="fa-solid fa-house"></i> Trang quản trị</a></header><main class="page-content">
+
+<div class="page-heading"><div><div class="page-title">Yêu cầu POI của chủ gian hàng</div><div class="page-subtitle">Duyệt yêu cầu nhận POI có sẵn hoặc POI mới do chủ gian hàng gửi.</div></div>
+<div class="page-actions"><a th:href="@{/owner}" class="btn btn-secondary"><i class="fa-solid fa-store"></i> Chủ gian hàng</a></div></div>
+<div class="stats-grid" style="margin-bottom:18px;">
+<div class="stat-card"><span>Tổng yêu cầu</span><strong th:text="${#lists.size(requests)}">0</strong></div>
+<div class="stat-card"><span>Đang chờ</span><strong th:text="${pendingCount}">0</strong></div>
+<div class="stat-card"><span>Đã duyệt</span><strong th:text="${approvedCount}">0</strong></div>
+<div class="stat-card"><span>Từ chối</span><strong th:text="${rejectedCount}">0</strong></div></div>
+<div class="toolbar" style="margin-bottom:14px;"><div style="display:flex;gap:8px;flex-wrap:wrap;">
+<a th:href="@{/admin/requests}" class="btn btn-sm" th:classappend="${status == null or status.isBlank()} ? ' btn-primary' : ' btn-secondary'">Tất cả</a>
+<a th:href="@{/admin/requests(status='Pending')}" class="btn btn-sm" th:classappend="${status == 'Pending'} ? ' btn-primary' : ' btn-secondary'">Pending</a>
+<a th:href="@{/admin/requests(status='Approved')}" class="btn btn-sm" th:classappend="${status == 'Approved'} ? ' btn-primary' : ' btn-secondary'">Approved</a>
+<a th:href="@{/admin/requests(status='Rejected')}" class="btn btn-sm" th:classappend="${status == 'Rejected'} ? ' btn-primary' : ' btn-secondary'">Rejected</a></div></div>
+<div class="table-wrapper"><table class="data-table"><thead><tr><th>#</th><th>Chủ gian hàng</th><th>Loại</th><th>POI</th><th>Ghi chú</th><th>Trạng thái</th><th>Ngày gửi</th><th>Hành động</th></tr></thead><tbody>
+<tr th:each="request : ${requests}"><td th:text="${request.id}">1</td>
+<td><strong th:text="${request.ownerProfile != null ? request.ownerProfile.businessName : '—'}">Tên gian hàng</strong><br><small th:text="${request.ownerProfile != null and request.ownerProfile.user != null ? request.ownerProfile.user.email : ''}">email</small></td>
+<td><span class="badge" th:text="${request.requestType}">Type</span></td>
+<td th:text="${request.poi != null and request.poi.translations != null and !request.poi.translations.isEmpty() ? request.poi.translations[0].name : (request.poiId != null ? 'POI #' + request.poiId : 'POI mới')}">POI</td>
+<td style="white-space:pre-wrap;max-width:320px" th:text="${request.note}">Ghi chú</td>
+<td><span class="badge" th:text="${request.status}" th:classappend="${request.status == 'Approved'} ? ' green' : (${request.status == 'Rejected'} ? ' red' : ' yellow')">Pending</span></td>
+<td th:text="${#temporals.format(request.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2026 12:00</td><td>
+<div th:if="${request.status == 'Pending'}" style="display:flex;gap:8px;flex-wrap:wrap">
+<form th:action="@{/admin/requests/approve}" method="post"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" th:if="${_csrf != null}"><input type="hidden" name="id" th:value="${request.id}"><button class="btn btn-sm btn-primary" type="submit">Duyệt</button></form>
+<form th:action="@{/admin/requests/reject}" method="post" style="display:flex;gap:6px"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" th:if="${_csrf != null}"><input type="hidden" name="id" th:value="${request.id}"><input name="note" class="form-control form-control-sm" placeholder="Lý do" style="min-width:140px"><button class="btn btn-sm btn-danger" type="submit">Từ chối</button></form></div>
+<small th:unless="${request.status == 'Pending'}" th:text="${request.reviewedAt != null ? #temporals.format(request.reviewedAt, 'dd/MM/yyyy HH:mm') : '-'}">-</small></td></tr>
+<tr th:if="${#lists.isEmpty(requests)}"><td colspan="8" style="text-align:center;color:#a8b3c7;padding:32px">Chưa có yêu cầu POI nào.</td></tr>
+</tbody></table></div>
+</main></div></body></html>

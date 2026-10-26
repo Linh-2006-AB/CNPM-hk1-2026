@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Sử dụng th:fragment để các trang khác có thể gọi lại -->
+<div th:fragment="form-content" class="form-grid" th:object="${supportedLanguage}">
+    <!-- Mã ngôn ngữ -->
+    <div class="form-group">
+        <label for="languageCode" class="form-label">Mã ngôn ngữ *</label>
+        
+        <!-- Nếu mã ngôn ngữ trống (Trường hợp tạo mới) -->
+        <input th:if="${supportedLanguage.languageCode == null or supportedLanguage.languageCode == ''}" 
+               type="text" id="languageCode" th:field="*{languageCode}" class="form-control" placeholder="Ví dụ: th, de, es, it" required />
+        
+        <!-- Nếu đã có mã ngôn ngữ (Trường hợp chỉnh sửa -> readonly) -->
+        <input th:unless="${supportedLanguage.languageCode == null or supportedLanguage.languageCode == ''}" 
+               type="text" id="languageCode" th:field="*{languageCode}" class="form-control" readonly style="opacity:0.7;" />
+        
+        <span th:if="${#fields.hasErrors('languageCode')}" th:errors="*{languageCode}" style="color:#ffabb6; font-size:12px; margin-top:4px; display:block;"></span>
+        <small style="color:#aab5c8; font-size:12px; margin-top:6px; display:block;">
+            Nên dùng mã ISO ngắn: en, vi, ja, ko, zh, th, de, es...
+        </small>
+    </div>
+
+    <!-- Tên ngôn ngữ -->
+    <div class="form-group">
+        <label for="languageName" class="form-label">Tên ngôn ngữ *</label>
+        <input type="text" id="languageName" th:field="*{languageName}" class="form-control" placeholder="Ví dụ: Thai, Deutsch, Español" required />
+        <span th:if="${#fields.hasErrors('languageName')}" th:errors="*{languageName}" style="color:#ffabb6; font-size:12px; margin-top:4px; display:block;"></span>
+    </div>
+
+    <!-- Edge-TTS voice -->
+    <div class="form-group full">
+        <label for="edgeTtsVoice" class="form-label">Edge-TTS voice</label>
+        <input type="text" id="edgeTtsVoice" th:field="*{edgeTtsVoice}" class="form-control" placeholder="Ví dụ: th-TH-PremwadeeNeural, de-DE-KatjaNeural. Có thể để trống nếu chưa có voice." />
+        <span th:if="${#fields.hasErrors('edgeTtsVoice')}" th:errors="*{edgeTtsVoice}" style="color:#ffabb6; font-size:12px; margin-top:4px; display:block;"></span>
+        <small style="color:#aab5c8; font-size:12px; margin-top:6px; display:block;">
+            Không bắt buộc. Nếu để trống, hệ thống vẫn tạo bản dịch chữ nhưng sẽ bỏ qua tạo audio để không làm crash tác vụ.
+        </small>
+    </div>
+
+    <!-- Trạng thái kích hoạt -->
+    <div class="form-group full">
+        <label style="display:flex; align-items:center; gap:10px; color:#d5deec; font-size:14px; font-weight:600; cursor:pointer;">
+            <input type="checkbox" th:field="*{isActive}" style="width:18px; height:18px; accent-color:#5b8cff; cursor:pointer;" />
+            Bật ngôn ngữ này cho web/app và dịch tự động nội dung còn thiếu
+        </label>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard - VERSA Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
+<style>
+:root{--surface:#10182a;--text:#f4f7fb;--text-muted:#8f96b0;--border:rgba(143,150,176,.18);--shadow:0 18px 50px rgba(0,0,0,.12)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;padding:28px;background:
+radial-gradient(circle at 12% 8%,#183363,transparent 28%),
+radial-gradient(circle at 92% 92%,#30205d,transparent 26%),#080b12;
+color:var(--text);font-family:"Be Vietnam Pro",sans-serif}
+a{color:inherit}.dashboard-page{width:min(1500px,100%);margin:auto;display:grid;gap:22px;padding-bottom:24px}
+.admin-hero{position:relative;overflow:hidden;border:1px solid var(--border);border-radius:32px;padding:32px;background:
+radial-gradient(circle at 12% 15%,rgba(91,140,255,.30),transparent 31%),
+radial-gradient(circle at 78% 12%,rgba(58,213,139,.25),transparent 34%),
+linear-gradient(135deg,rgba(13,21,42,.98),rgba(7,13,28,.94));box-shadow:var(--shadow)}
+.admin-hero:after{content:"";position:absolute;inset:auto -120px -160px auto;width:420px;height:420px;border-radius:50%;background:rgba(91,140,255,.12);filter:blur(4px)}
+.admin-hero-inner{position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:26px;align-items:end}
+.hero-kicker{width:fit-content;display:inline-flex;align-items:center;gap:9px;padding:9px 13px;border:1px solid rgba(143,180,255,.32);border-radius:999px;color:#bcd0ff;background:rgba(91,140,255,.13);font-size:12px;font-weight:950;letter-spacing:.08em;text-transform:uppercase}
+.admin-hero h1{max-width:900px;margin:16px 0 12px;font-size:clamp(36px,5vw,72px);line-height:.95;font-weight:1000;letter-spacing:-.075em}
+.admin-hero p{margin:0;max-width:820px;color:var(--text-muted);line-height:1.75;font-size:15px}
+.hero-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 15px;border:1px solid var(--border);border-radius:12px;text-decoration:none;font-size:12px;font-weight:900;cursor:pointer;background:rgba(148,163,184,.08);color:#d7e2f5}
+.btn:hover{border-color:#5b8cff;color:#fff}.btn-primary{background:#5b8cff;border-color:#5b8cff;color:#fff}.btn-primary:hover{background:#3f72ed}.btn-sm{min-height:38px;padding:0 12px}
+.section-heading{display:flex;justify-content:space-between;align-items:end;gap:16px}.section-heading h2{margin:0;font-size:23px;font-weight:1000;letter-spacing:-.045em}.section-heading p{margin:5px 0 0;color:var(--text-muted);font-size:13px;line-height:1.55}
+.overview-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.metric-card,.panel-card,.quick-card{position:relative;overflow:hidden;border:1px solid var(--border);border-radius:24px;background:var(--surface);color:var(--text);box-shadow:0 18px 50px rgba(0,0,0,.12)}
+a.metric-card,a.quick-card{text-decoration:none;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+a.metric-card:hover,a.quick-card:hover{transform:translateY(-3px);border-color:rgba(91,140,255,.45);box-shadow:var(--shadow)}
+.metric-card{min-height:162px;padding:20px}.metric-card:after{content:"";position:absolute;top:-38px;right:-38px;width:128px;height:128px;border-radius:50%;background:rgba(91,140,255,.10)}
+.metric-top{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.metric-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:17px;color:#fff;background:linear-gradient(135deg,#5b8cff,#3ad58b);box-shadow:0 14px 32px rgba(91,140,255,.26)}
+.metric-pill{display:inline-flex;align-items:center;gap:6px;padding:7px 9px;border-radius:999px;color:#bcd0ff;background:rgba(91,140,255,.12);font-size:11px;font-weight:950;white-space:nowrap}
+.metric-value{position:relative;z-index:1;display:block;margin-top:18px;font-size:38px;line-height:1;font-weight:1000;letter-spacing:-.06em}.metric-label{position:relative;z-index:1;display:block;margin-top:9px;color:var(--text-muted);font-size:13px;font-weight:850;line-height:1.45}
+.focus-grid,.visitor-grid,.analytics-grid,.content-grid{display:grid;gap:18px}.focus-grid{grid-template-columns:minmax(0,1.15fr) minmax(360px,.85fr)}.visitor-grid{grid-template-columns:minmax(0,1.25fr) minmax(380px,.75fr)}.analytics-grid{grid-template-columns:minmax(0,1.35fr) minmax(360px,.65fr)}.content-grid{grid-template-columns:minmax(0,1.35fr) minmax(380px,.65fr);align-items:start}
+.panel-card-header{min-height:74px;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:20px 22px;border-bottom:1px solid var(--border)}.panel-title{display:flex;align-items:center;gap:10px;margin:0;font-size:18px;font-weight:1000;letter-spacing:-.035em}.panel-title i{color:#5b8cff}.panel-subtitle{margin-top:5px;color:var(--text-muted);font-size:13px;line-height:1.5}.panel-card-body{padding:20px 22px 22px}
+.action-summary-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.action-box{border:1px solid var(--border);border-radius:20px;padding:17px;color:var(--text);background:rgba(148,163,184,.06);text-decoration:none}.action-box:hover{border-color:rgba(91,140,255,.42);background:rgba(91,140,255,.09)}.action-box strong{display:block;font-size:31px;line-height:1;font-weight:1000;letter-spacing:-.06em}.action-box span{display:block;margin-top:9px;color:var(--text-muted);font-size:13px;font-weight:850}
+.health-meter{margin-top:18px}.health-row{display:flex;justify-content:space-between;gap:12px;color:var(--text-muted);font-size:13px;font-weight:850;margin-bottom:8px}.health-bar{height:12px;border-radius:999px;background:rgba(148,163,184,.14);overflow:hidden}.health-bar span{display:block;height:100%;border-radius:inherit;background:linear-gradient(135deg,#5b8cff,#3ad58b)}
+.quick-list{display:grid;gap:10px}.quick-card{min-height:58px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 16px;background:rgba(148,163,184,.06);font-weight:920}.quick-card span{display:inline-flex;align-items:center;gap:10px}
+.alert-stack{display:grid;gap:12px}.admin-alert{display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;padding:14px;border:1px solid var(--border);border-radius:18px;color:var(--text);background:rgba(148,163,184,.06);text-decoration:none}.admin-alert:hover{border-color:rgba(91,140,255,.45);background:rgba(91,140,255,.09)}.admin-alert-icon{width:44px;height:44px;display:grid;place-items:center;border-radius:16px;color:#fff;background:#5b8cff}.admin-alert.warning .admin-alert-icon{background:#f59e0b}.admin-alert.success .admin-alert-icon{background:#16a36a}.admin-alert strong{display:block;font-weight:1000}.admin-alert span span{display:block;margin-top:4px;color:var(--text-muted);font-size:13px;line-height:1.45}
+.chart-box{height:330px;position:relative}.chart-box.small{height:300px}.dashboard-table{width:100%;border-collapse:collapse}.dashboard-table th{padding:13px 12px;color:var(--text-muted);border-bottom:1px solid var(--border);font-size:12px;font-weight:950;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap}.dashboard-table td{padding:14px 12px;border-bottom:1px solid var(--border);vertical-align:middle}.dashboard-table tr:last-child td{border-bottom:0}.location-table-wrap{overflow-x:auto}.location-name{display:grid;gap:6px}.location-name small{color:var(--text-muted);font-size:12px}.menu-badge,.rating-pill,.lang-pill,.rank-badge{display:inline-flex;width:fit-content;align-items:center;justify-content:center;gap:6px;border-radius:999px;font-weight:950;white-space:nowrap}.menu-badge{padding:6px 9px;color:#fbbf24;background:rgba(251,191,36,.10);font-size:11px}.rating-pill{padding:7px 10px;color:#fbbf24;background:rgba(251,191,36,.10);font-size:13px}.lang-pill{min-width:42px;padding:6px 9px;color:#dce7ff;background:rgba(91,140,255,.16);border:1px solid rgba(91,140,255,.24);font-size:12px}.rank-badge{min-width:38px;height:30px;color:#dce7ff;background:rgba(91,140,255,.18);border:1px solid rgba(91,140,255,.28);font-size:12px}
+.side-stack{display:grid;gap:18px}.dashboard-empty{min-height:145px;display:grid;place-items:center;text-align:center;color:var(--text-muted);padding:24px}.dashboard-empty i{display:block;margin-bottom:12px;font-size:38px;color:rgba(143,150,176,.8)}.dashboard-empty p{margin:0}
+.map-card .panel-card-body{padding:0}#heatmap-container{width:100%;height:520px;background:#0f172a}.map-legend{display:flex;flex-wrap:wrap;gap:10px;padding:14px 18px;border-top:1px solid var(--border);color:var(--text-muted);font-size:13px}.legend-item{display:inline-flex;align-items:center;gap:7px;font-weight:850}.legend-dot{width:10px;height:10px;border-radius:50%;display:inline-block}.dot-approved{background:#3ad58b}.dot-pending{background:#f5b942}.dot-rejected{background:#ff6577}.dot-heat{background:#5b8cff}
+.custom-map-icon{background:transparent;border:none}.custom-marker{display:flex;justify-content:center;align-items:center;width:32px;height:32px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 6px 16px rgba(0,0,0,.32);color:#fff;font-size:14px}.custom-marker i{transform:rotate(45deg)}.custom-marker.approved{background:#3ad58b}.custom-marker.pending{background:#f5b942}.custom-marker.rejected{background:#ff6577}.current-user-marker{display:flex;justify-content:center;align-items:center;width:34px;height:34px;border-radius:50%;background:linear-gradient(180deg,#4f8cff 0%,#2f6df6 100%);border:3px solid #fff;box-shadow:0 10px 24px rgba(47,109,246,.35);color:#fff;font-size:15px}.leaflet-container{font-family:inherit}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--surface);color:var(--text);border:1px solid var(--border)}.visitor-note{margin:12px 0 0;color:var(--text-muted);font-size:12px;line-height:1.55}
+@media(max-width:1280px){.focus-grid,.analytics-grid,.visitor-grid,.content-grid{grid-template-columns:1fr}}
+@media(max-width:1180px){.admin-hero-inner{grid-template-columns:1fr}.hero-actions{justify-content:flex-start}.overview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:720px){body{padding:16px}.admin-hero{padding:24px;border-radius:24px}.overview-grid,.action-summary-grid{grid-template-columns:1fr}.panel-card-header,.section-heading{align-items:flex-start;flex-direction:column}.chart-box,.chart-box.small{height:260px}#heatmap-container{height:380px}}
+</style>
+</head>
+<body>
+<div class="dashboard-page">
+<section class="admin-hero"><div class="admin-hero-inner"><div>
+<div class="hero-kicker"><i class="fa-solid fa-chart-line"></i> VERSA Admin</div>
+<h1>Bảng điều khiển vận hành</h1>
+<p>Theo dõi nhanh nội dung, điểm tham quan, lượt khách theo khung giờ, doanh thu menu và các việc cần xử lý trong hệ thống VERSA.</p>
+</div><div class="hero-actions">
+<a href="/admin/approval/poi-pending" class="btn"><i class="fa-solid fa-circle-check"></i>Duyệt POI</a>
+<a href="/admin/visitor-traffic" class="btn"><i class="fa-solid fa-users-viewfinder"></i>Báo cáo khách</a>
+<a href="/admin/pois/create" class="btn btn-primary"><i class="fa-solid fa-plus"></i>Tạo POI</a>
+</div></div></section>
+
+<div class="section-heading"><div><h2>1. Tổng quan nhanh</h2><p>Nhìn trong vài giây để biết hôm nay hệ thống có gì cần chú ý.</p></div></div>
+<section class="overview-grid">
+<a class="metric-card" href="/admin/pois"><span class="metric-top"><span class="metric-icon"><i class="fa-solid fa-map-pin"></i></span><span class="metric-pill">Nội dung</span></span><span class="metric-value">128</span><span class="metric-label">Điểm tham quan</span></a>
+<a class="metric-card" href="/admin/tours"><span class="metric-top"><span class="metric-icon"><i class="fa-solid fa-route"></i></span><span class="metric-pill">Tour</span></span><span class="metric-value">24</span><span class="metric-label">Tour du lịch</span></a>
+<a class="metric-card" href="/admin/api/audio-history" target="_blank"><span class="metric-top"><span class="metric-icon"><i class="fa-solid fa-headphones"></i></span><span class="metric-pill">Tương tác</span></span><span class="metric-value">3,842</span><span class="metric-label">Tổng lượt nghe/audio</span></a>
+<a class="metric-card" href="/admin/media/library"><span class="metric-top"><span class="metric-icon"><i class="fa-solid fa-file-audio"></i></span><span class="metric-pill">Media</span></span><span class="metric-value">96</span><span class="metric-label">File audio đa ngôn ngữ</span></a>
+<a class="metric-card" href="/admin/users"><span class="metric-top"><span class="metric-icon"><i class="fa-solid fa-users"></i></span><span class="metric-pill">Khách</span></span><span class="metric-value">1,284</span><span class="metric-label">Tài khoản du khách đã đăng ký</span></a>
+<a class="metric-card" href="/admin/visitor-traffic"><span class="metric-top"><span class="metric-icon"><i class="fa-solid fa-person-walking"></i></span><span class="metric-pill">Hôm nay</span></span><span class="metric-value">236</span><span class="metric-label">Khách duy nhất có hoạt động hôm nay</span></a>
+<a class="metric-card" href="/admin/visitor-traffic"><span class="metric-top"><span class="metric-icon"><i class="fa-solid fa-location-crosshairs"></i></span><span class="metric-pill">GPS</span></span><span class="metric-value">418</span><span class="metric-label">Lượt check-in GPS hôm nay</span></a>
+<a class="metric-card" href="/admin/purchases"><span class="metric-top"><span class="metric-icon"><i class="fa-solid fa-utensils"></i></span><span class="metric-pill">Menu</span></span><span class="metric-value">57</span><span class="metric-label">Đơn menu hôm nay · 12.450.000 đ</span></a>
+</section>
+
+<div class="section-heading"><div><h2>2. Việc cần xử lý</h2><p>Ưu tiên các tác vụ quan trọng trước khi xem biểu đồ chi tiết.</p></div></div>
+<section class="focus-grid">
+<div class="panel-card"><div class="panel-card-header"><div><h3 class="panel-title"><i class="fa-solid fa-list-check"></i>Trạng thái POI</h3><div class="panel-subtitle">Theo dõi POI đã duyệt, chờ duyệt và bị từ chối.</div></div><a href="/admin/approval/poi-pending" class="btn btn-sm">Xem duyệt POI</a></div>
+<div class="panel-card-body"><div class="action-summary-grid">
+<a class="action-box" href="/admin/pois?status=Approved"><strong>94</strong><span>POI đã duyệt</span></a>
+<a class="action-box" href="/admin/pois?status=Pending"><strong>22</strong><span>POI chờ duyệt · 17%</span></a>
+<a class="action-box" href="/admin/pois?status=Rejected"><strong>12</strong><span>POI bị từ chối</span></a>
+</div><div class="health-meter"><div class="health-row"><span>Tỷ lệ POI đã duyệt</span><strong>73%</strong></div><div class="health-bar"><span style="width:73%"></span></div></div></div></div>
+<div class="panel-card"><div class="panel-card-header"><div><h3 class="panel-title"><i class="fa-solid fa-bolt"></i>Truy cập nhanh</h3><div class="panel-subtitle">Những chức năng admin thường dùng nhất.</div></div></div>
+<div class="panel-card-body"><div class="quick-list">
+<a class="quick-card" href="/admin/visitor-traffic"><span><i class="fa-solid fa-users-viewfinder"></i>Xem khách theo quán & khung giờ</span><i class="fa-solid fa-arrow-right"></i></a>
+<a class="quick-card" href="/admin/pois/create"><span><i class="fa-solid fa-plus"></i>Tạo POI mới</span><i class="fa-solid fa-arrow-right"></i></a>
+<a class="quick-card" href="/admin/tours/create"><span><i class="fa-solid fa-route"></i>Tạo tour mới</span><i class="fa-solid fa-arrow-right"></i></a>
+<a class="quick-card" href="/admin/media"><span><i class="fa-solid fa-wand-magic-sparkles"></i>Tác vụ AI Media</span><i class="fa-solid fa-arrow-right"></i></a>
+<a class="quick-card" href="/" target="_blank"><span><i class="fa-solid fa-globe"></i>Mở web du khách</span><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+</div></div></div>
+</section>
+
+<div class="section-heading"><div><h2>3. Du khách & mật độ tại địa điểm</h2><p>Biết khách vào quán nào, khung giờ nào đông và địa điểm nào đang có nhiều tương tác.</p></div><a href="/admin/visitor-traffic" class="btn btn-primary btn-sm"><i class="fa-solid fa-filter"></i>Lọc theo quán/giờ</a></div>
+<section class="visitor-grid">
+<div class="panel-card"><div class="panel-card-header"><div><h3 class="panel-title"><i class="fa-solid fa-clock"></i>Lượt du khách theo khung giờ hôm nay</h3><div class="panel-subtitle">Check-in là lượt vào; tương tác gồm nghe audio/TTS và hành vi trên web/app.</div></div></div><div class="panel-card-body"><div class="chart-box"><canvas id="visitorTrafficChart"></canvas></div><p class="visitor-note">Hệ thống chưa có nút check-out/rời địa điểm, nên cột “đang hoạt động” được ước tính từ tương tác trong 30 phút gần nhất.</p></div></div>
+<div class="panel-card"><div class="panel-card-header"><div><h3 class="panel-title"><i class="fa-solid fa-triangle-exclamation"></i>Cần chú ý</h3><div class="panel-subtitle">Gợi ý vận hành nhanh cho admin.</div></div></div><div class="panel-card-body"><div class="alert-stack">
+<a class="admin-alert warning" href="/admin/approval/poi-pending"><span class="admin-alert-icon"><i class="fa-solid fa-clock"></i></span><span><strong>22 POI đang chờ duyệt</strong><span>Cần kiểm tra và xử lý nội dung mới.</span></span></a>
+<a class="admin-alert success" href="/admin"><span class="admin-alert-icon"><i class="fa-solid fa-circle-check"></i></span><span><strong>Hệ thống hoạt động ổn định</strong><span>Dữ liệu tương tác hôm nay đang tăng.</span></span></a>
+<a class="admin-alert info" href="/admin/api/audio-history" target="_blank"><span class="admin-alert-icon"><i class="fa-solid fa-chart-line"></i></span><span><strong>Audio được nghe nhiều</strong><span>Có 3.842 lượt phát được ghi nhận.</span></span></a>
+</div></div></div>
+</section>
+
+<section class="panel-card"><div class="panel-card-header"><div><h3 class="panel-title"><i class="fa-solid fa-store"></i>Số lượng du khách theo địa điểm / quán ăn</h3><div class="panel-subtitle">Sắp xếp theo khách đang hoạt động, khách trong ngày, đơn menu và lượt tương tác.</div></div><a href="/admin/visitor-traffic" class="btn btn-sm">Báo cáo chi tiết</a></div>
+<div class="panel-card-body"><div class="location-table-wrap"><table class="dashboard-table"><thead><tr><th>Địa điểm / quán ăn</th><th>Đang ở đây</th><th>Khách hôm nay</th><th>Check-in</th><th>Tương tác</th><th>Đơn menu</th><th>Doanh thu</th><th>Lần cuối</th></tr></thead><tbody>
+<tr><td><span class="location-name"><strong>Chợ Bến Thành</strong><small>VERSA Store</small><span class="menu-badge"><i class="fa-solid fa-utensils"></i> Quán ăn/menu</span></span></td><td><strong>48</strong></td><td>182</td><td>210</td><td>564</td><td><strong>17</strong><small style="display:block;color:#f59e0b">3 cần xử lý</small></td><td>4.280.000 đ</td><td>17:12</td></tr>
+<tr><td><span class="location-name"><strong>Nhà thờ Đức Bà</strong><small>POI trung tâm</small></span></td><td><strong>31</strong></td><td>126</td><td>141</td><td>402</td><td><strong>0</strong></td><td>0 đ</td><td>17:08</td></tr>
+<tr><td><span class="location-name"><strong>Dinh Độc Lập</strong><small>VERSA Heritage</small><span class="menu-badge"><i class="fa-solid fa-utensils"></i> Quán ăn/menu</span></span></td><td><strong>27</strong></td><td>98</td><td>110</td><td>351</td><td><strong>12</strong></td><td>2.940.000 đ</td><td>16:59</td></tr>
+<tr><td><span class="location-name"><strong>Phố đi bộ Nguyễn Huệ</strong></span></td><td><strong>22</strong></td><td>84</td><td>91</td><td>288</td><td><strong>0</strong></td><td>0 đ</td><td>16:52</td></tr>
+</tbody></table></div></div></section>
+
+<div class="section-heading"><div><h2>4. Phân tích tương tác</h2><p>Xem người dùng đang nghe nội dung như thế nào và chọn ngôn ngữ nào nhiều nhất.</p></div></div>
+<section class="analytics-grid">
+<div class="panel-card"><div class="panel-card-header"><div><h3 class="panel-title"><i class="fa-solid fa-chart-line"></i>Lượt phát 7 ngày</h3><div class="panel-subtitle">Số lượt tương tác/nghe audio theo ngày.</div></div><a href="/admin/api/audio-history" target="_blank" class="btn btn-sm">Xem lịch sử</a></div><div class="panel-card-body"><div class="chart-box"><canvas id="lineChart"></canvas></div></div></div>
+<div class="panel-card"><div class="panel-card-header"><div><h3 class="panel-title"><i class="fa-solid fa-chart-pie"></i>Ngôn ngữ được chọn</h3><div class="panel-subtitle">Tỷ trọng ngôn ngữ trong lịch sử phát.</div></div></div><div class="panel-card-body"><div class="chart-box small"><canvas id="pieChart"></canvas></div></div></div>
+</section>
+
+<div class="section-heading"><div><h2>5. Bản đồ & chất lượng nội dung</h2><p>Kiểm tra vị trí POI, vùng tương tác và những địa điểm đang được đánh giá tốt.</p></div></div>
+<section class="content-grid">
+<div class="panel-card map-card"><div class="panel-card-header"><div><h3 class="panel-title"><i class="fa-solid fa-map-location-dot"></i>Bản đồ điểm tham quan</h3><div class="panel-subtitle">128 POI đã thêm. Heatmap thể hiện vị trí tương tác của du khách.</div></div><button type="button" class="btn btn-sm" id="btnLocateDashboard"><i class="fa-solid fa-location-crosshairs"></i>Vị trí của tôi</button></div><div class="panel-card-body"><div id="heatmap-container"></div><div class="map-legend"><span class="legend-item"><span class="legend-dot dot-approved"></span>Đã duyệt</span><span class="legend-item"><span class="legend-dot dot-pending"></span>Chờ duyệt</span><span class="legend-item"><span class="legend-dot dot-rejected"></span>Từ chối</span><span class="legend-item"><span class="legend-dot dot-heat"></span>Heatmap lượt tương tác</span></div></div></div>
+<aside class="side-stack">
+<div class="panel-card"><div class="panel-card-header"><div><h3 class="panel-title"><i class="fa-solid fa-star" style="color:#f59e0b"></i>Top POI đánh giá cao</h3><div class="panel-subtitle">Dựa trên điểm đánh giá trung bình.</div></div></div><div class="panel-card-body"><table class="dashboard-table"><thead><tr><th>Hạng</th><th>POI</th><th>Đánh giá</th></tr></thead><tbody>
+<tr><td><span class="rank-badge">#1</span></td><td><strong>Chợ Bến Thành</strong></td><td><span class="rating-pill"><i class="fa-solid fa-star"></i>4.9</span></td></tr>
+<tr><td><span class="rank-badge">#2</span></td><td><strong>Dinh Độc Lập</strong></td><td><span class="rating-pill"><i class="fa-solid fa-star"></i>4.8</span></td></tr>
+<tr><td><span class="rank-badge">#3</span></td><td><strong>Nhà thờ Đức Bà</strong></td><td><span class="rating-pill"><i class="fa-solid fa-star"></i>4.7</span></td></tr>
+<tr><td><span class="rank-badge">#4</span></td><td><strong>Phố đi bộ Nguyễn Huệ</strong></td><td><span class="rating-pill"><i class="fa-solid fa-star"></i>4.6</span></td></tr>
+</tbody></table></div></div>
+<div class="panel-card"><div class="panel-card-header"><div><h3 class="panel-title"><i class="fa-solid fa-ranking-star"></i>POI được nghe nhiều</h3><div class="panel-subtitle">Top địa điểm có nhiều lượt nghe nhất.</div></div></div><div class="panel-card-body"><table class="dashboard-table"><thead><tr><th>Hạng</th><th>POI</th><th>Lượt</th></tr></thead><tbody>
+<tr><td><span class="rank-badge">#1</span></td><td><strong>Chợ Bến Thành</strong></td><td><strong>982</strong></td></tr>
+<tr><td><span class="rank-badge">#2</span></td><td><strong>Dinh Độc Lập</strong></td><td><strong>746</strong></td></tr>
+<tr><td><span class="rank-badge">#3</span></td><td><strong>Nhà thờ Đức Bà</strong></td><td><strong>621</strong></td></tr>
+<tr><td><span class="rank-badge">#4</span></td><td><strong>Phố đi bộ Nguyễn Huệ</strong></td><td><strong>514</strong></td></tr>
+</tbody></table></div></div>
+</aside></section>
+
+<div class="section-heading"><div><h2>6. Hoạt động gần đây</h2><p>Theo dõi các lượt tương tác mới nhất để biết hệ thống đang được sử dụng ra sao.</p></div><a href="/admin/activity-log" class="btn btn-sm">Xem tất cả</a></div>
+<section class="panel-card"><div class="panel-card-body"><div class="location-table-wrap"><table class="dashboard-table"><thead><tr><th>Thời gian</th><th>POI</th><th>Ngôn ngữ</th></tr></thead><tbody>
+<tr><td>26/10 17:22</td><td><strong>Chợ Bến Thành</strong></td><td><span class="lang-pill">VI</span></td></tr>
+<tr><td>26/10 17:19</td><td><strong>Dinh Độc Lập</strong></td><td><span class="lang-pill">EN</span></td></tr>
+<tr><td>26/10 17:15</td><td><strong>Nhà thờ Đức Bà</strong></td><td><span class="lang-pill">KO</span></td></tr>
+<tr><td>26/10 17:11</td><td><strong>Phố đi bộ Nguyễn Huệ</strong></td><td><span class="lang-pill">JA</span></td></tr>
+</tbody></table></div></div></section>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+<script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const textMuted='#8f96b0', border='rgba(143,150,176,.18)', surface='#10182a';
+
+new Chart(document.getElementById('visitorTrafficChart'),{
+ type:'bar',
+ data:{labels:['08h','09h','10h','11h','12h','13h','14h','15h','16h','17h'],
+ datasets:[
+ {label:'Khách duy nhất',data:[8,14,21,28,36,31,27,34,41,48],type:'line',borderColor:'#f5b942',backgroundColor:'rgba(245,185,66,.14)',borderWidth:3,pointRadius:3,tension:.35},
+ {label:'Check-in',data:[7,13,18,23,31,26,22,29,37,43],backgroundColor:'rgba(58,213,139,.72)',borderRadius:8},
+ {label:'Tương tác',data:[12,21,35,41,55,48,44,52,67,74],backgroundColor:'rgba(91,140,255,.72)',borderRadius:8},
+ {label:'Đơn menu',data:[1,2,3,5,7,6,5,8,10,12],backgroundColor:'rgba(255,101,119,.70)',borderRadius:8}
+ ]},
+ options:{responsive:true,maintainAspectRatio:false,interaction:{intersect:false,mode:'index'},plugins:{legend:{position:'bottom',labels:{color:textMuted,usePointStyle:true}},tooltip:{backgroundColor:'#111827',padding:12,cornerRadius:12}},scales:{y:{beginAtZero:true,ticks:{precision:0,color:textMuted},grid:{color:border}},x:{ticks:{color:textMuted,maxRotation:0},grid:{display:false}}}}
+});
+
+new Chart(document.getElementById('lineChart'),{
+ type:'line',
+ data:{labels:['20/10','21/10','22/10','23/10','24/10','25/10','26/10'],datasets:[{data:[380,462,514,488,602,731,842],borderColor:'#5b8cff',backgroundColor:'rgba(91,140,255,.16)',borderWidth:3,pointRadius:4,pointHoverRadius:6,pointBackgroundColor:'#5b8cff',tension:.35,fill:true}]},
+ options:{responsive:true,maintainAspectRatio:false,interaction:{intersect:false,mode:'index'},plugins:{legend:{display:false},tooltip:{backgroundColor:'#111827',padding:12,cornerRadius:12}},scales:{y:{beginAtZero:true,ticks:{precision:0,color:textMuted},grid:{color:border}},x:{ticks:{color:textMuted},grid:{display:false}}}}
+});
+
+new Chart(document.getElementById('pieChart'),{
+ type:'doughnut',
+ data:{labels:['VI','EN','KO','JA','ZH'],datasets:[{data:[48,26,12,9,5],backgroundColor:['#5b8cff','#3ad58b','#f5b942','#ff6577','#b184ff'],borderColor:surface,borderWidth:4,hoverOffset:8}]},
+ options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{position:'bottom',labels:{color:textMuted,usePointStyle:true,padding:18}},tooltip:{backgroundColor:'#111827',padding:12,cornerRadius:12}}}
+});
+
+const map=L.map('heatmap-container',{zoomControl:true}).setView([10.762622,106.660172],13);
+const osm=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
+const satellite=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'&copy; Esri'});
+const topo=L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',{maxZoom:17,attribution:'&copy; OpenTopoMap'});
+L.control.layers({'Bản đồ tiêu chuẩn':osm,'Vệ tinh':satellite,'Địa hình':topo}).addTo(map);
+
+const pois=[
+{id:1,name:'Chợ Bến Thành',lat:10.7720,lng:106.6983,status:'Approved',radius:70},
+{id:2,name:'Dinh Độc Lập',lat:10.7770,lng:106.6953,status:'Approved',radius:60},
+{id:3,name:'Nhà thờ Đức Bà',lat:10.7798,lng:106.6990,status:'Pending',radius:55},
+{id:4,name:'Phố đi bộ Nguyễn Huệ',lat:10.7740,lng:106.7040,status:'Approved',radius:80},
+{id:5,name:'Bảo tàng Chứng tích Chiến tranh',lat:10.7795,lng:106.6920,status:'Rejected',radius:50}
+];
+const bounds=[], cluster=L.markerClusterGroup({showCoverageOnHover:false,maxClusterRadius:40,spiderfyOnMaxZoom:true});
+pois.forEach(p=>{
+ const cls=p.status==='Approved'?'approved':p.status==='Rejected'?'rejected':'pending';
+ const icon=L.divIcon({className:'custom-map-icon',html:`<div class="custom-marker ${cls}"><i class="fa-solid fa-map-pin"></i></div>`,iconSize:[32,32],iconAnchor:[16,32],popupAnchor:[0,-32]});
+ const marker=L.marker([p.lat,p.lng],{icon}).bindPopup(`<strong>${p.name}</strong><div style="margin:6px 0 10px;opacity:.78">POI #${p.id} · ${p.status} · bán kính ${p.radius} m</div><a href="/admin/pois/${p.id}">Mở POI</a>`);
+ cluster.addLayer(marker);
+ const color=cls==='approved'?'#3ad58b':cls==='rejected'?'#ff6577':'#f5b942';
+ L.circle([p.lat,p.lng],{radius:p.radius,color,weight:1,fillColor:color,fillOpacity:.08}).addTo(map);
+ bounds.push([p.lat,p.lng]);
+});
+map.addLayer(cluster);
+const heat=[ [10.772,106.6983,0.9],[10.777,106.6953,0.75],[10.7798,106.699,0.6],[10.774,106.704,0.8],[10.7795,106.692,0.4] ];
+L.heatLayer(heat,{radius:25,blur:16,maxZoom:17}).addTo(map);
+map.fitBounds(new L.LatLngBounds(bounds),{padding:[35,35],maxZoom:14});
+
+let adminMarker=null,adminCircle=null;
+document.getElementById('btnLocateDashboard').addEventListener('click',function(){
+ const btn=this;
+ if(!navigator.geolocation){alert('Trình duyệt không hỗ trợ định vị.');return}
+ btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Đang tìm...';btn.disabled=true;
+ navigator.geolocation.getCurrentPosition(pos=>{
+  const {latitude:lat,longitude:lng,accuracy:acc}=pos.coords;
+  if(adminMarker){adminMarker.setLatLng([lat,lng]);adminCircle.setLatLng([lat,lng]);adminCircle.setRadius(acc)}
+  else{
+   const icon=L.divIcon({className:'custom-map-icon',html:'<div class="current-user-marker"><i class="fa-solid fa-user"></i></div>',iconSize:[32,32],iconAnchor:[16,32]});
+   adminMarker=L.marker([lat,lng],{icon}).addTo(map).bindPopup('Vị trí hiện tại của bạn');
+   adminCircle=L.circle([lat,lng],{radius:acc,color:'#5b8cff',weight:1,fillOpacity:.1}).addTo(map);
+  }
+  map.setView([lat,lng],16);adminMarker.openPopup();
+  btn.innerHTML='<i class="fa-solid fa-location-crosshairs"></i> Vị trí của tôi';btn.disabled=false;
+ },err=>{alert('Lỗi định vị: '+err.message);btn.innerHTML='<i class="fa-solid fa-location-crosshairs"></i> Vị trí của tôi';btn.disabled=false},{enableHighAccuracy:true,timeout:12000,maximumAge:0});
+});
+setTimeout(()=>map.invalidateSize(),350);
+window.addEventListener('resize',()=>setTimeout(()=>map.invalidateSize(),150));
+</script>
+</body>
+</html>

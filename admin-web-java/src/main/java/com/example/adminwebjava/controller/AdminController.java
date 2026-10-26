@@ -96,19 +96,19 @@ public class AdminController {
     public String dashboard(Model model) {
         model.addAttribute("stats", service.dashboardStats());
         model.addAttribute("logs", service.findAdminLogs());
-        return "admin/dashboard";
+        return "Home/Index";
     }
 
     @GetMapping("/pois")
     public String pois(@RequestParam(defaultValue = "vi") String lang, Model model) {
         model.addAttribute("pois", service.findPois(lang, "", ""));
-        return "admin/pois";
+        return "pois/Index";
     }
 
     @GetMapping("/tours")
     public String tours(Model model, @RequestParam(defaultValue = "vi") String lang) {
         model.addAttribute("tours", service.findTours(lang));
-        return "admin/tours";
+        return "Tour/Index";
     }
 
     // POI administration (the equivalent of the main actions in Poi/Media/translation controllers).

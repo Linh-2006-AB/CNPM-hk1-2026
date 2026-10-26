@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bản dịch Danh mục - VERSA Admin</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{box-sizing:border-box}body{margin:0;padding:36px;background:#0b1020;color:#edf2fa;font-family:Arial,sans-serif}.wrap{max-width:1200px;margin:auto}.subtitle{color:#aab5c8}.card{margin-top:24px;padding:28px;border:1px solid #28334a;border-radius:16px;background:#141c2d}.card h3{margin-top:0}
+.toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:20px}
+.table-wrapper{overflow-x:auto}
+.data-table{width:100%;border-collapse:collapse;margin-top:10px;text-align:left}
+.data-table th{padding:14px 16px;background:#0e1524;color:#d5deec;font-size:13px;border-bottom:1px solid #28334a}
+.data-table td{padding:14px 16px;border-bottom:1px solid #28334a;font-size:14px;color:#edf2fa;vertical-align:middle}
+.data-table tr:hover td{background:rgba(91, 140, 255, 0.03)}
+.badge{display:inline-block;padding:5px 10px;border-radius:8px;font-size:12px;font-weight:600}
+.badge.blue{background:rgba(91, 140, 255, 0.15);color:#5b8cff}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border:0;border-radius:9px;text-decoration:none;cursor:pointer;font-weight:700;font-size:13px}
+.btn-primary{background:#5b8cff;color:white}
+.btn-primary:hover{background:#4a7be8}
+.btn-secondary{background:#29364c;color:white}
+.btn-secondary:hover{background:#34445c}
+.btn-danger{background:#451f2a;color:#ffabb6}
+.btn-danger:hover{background:#542533}
+</style>
+</head>
+<body>
+<main class="wrap">
+    <h1>
+        Quản lý bản dịch — Danh mục #<span th:text="${category.id}"></span>
+    </h1>
+    <p class="subtitle">Quản lý nội dung đa ngôn ngữ cho danh mục.</p>
+
+    <div class="card">
+        <!-- Thanh công cụ -->
+        <div class="toolbar">
+            <div>
+                <a th:href="@{/categories}" class="btn btn-secondary">
+                    <i class="fa-solid fa-arrow-left"></i> Quay lại
+                </a>
+            </div>
+            <div>
+                <a th:href="@{/category-translation/create(categoryId=${category.id})}" class="btn btn-primary">
+                    <i class="fa-solid fa-plus"></i> Thêm ngôn ngữ mới
+                </a>
+            </div>
+        </div>
+
+        <!-- Bảng danh sách bản dịch -->
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th style="width: 150px;">Ngôn ngữ</th>
+                        <th>Tên Danh mục</th>
+                        <th style="text-align:center; width: 180px;">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${category.translations != null and !#lists.isEmpty(category.translations)}" th:each="t : ${category.translations}">
+                        <!-- Ngôn ngữ -->
+                        <td>
+                            <span class="badge blue" th:text="${t.languageCode.toUpperCase()}"></span>
+                        </td>
+
+                        <!-- Tên danh mục theo ngôn ngữ -->
+                        <td style="font-weight:600;" th:text="${t.name}"></td>
+
+                        <!-- Thao tác -->
+                        <td style="text-align:center;">
+                            <div style="display:flex; gap:8px; justify-content:center; align-items:center; flex-wrap:wrap;">
+                                <!-- Sửa -->
+                                <a th:href="@{/category-translation/edit(id=${t.id})}" class="btn btn-secondary" style="padding:8px 12px; font-size:12px;" title="Sửa">
+                                    <i class="fa-solid fa-pen"></i> Sửa
+                                </a>
+
+                                <!-- Xóa (Chỉ hiển thị cho Admin) -->
+                                <form th:if="${isAdmin}" th:action="@{/category-translation/delete}" method="post" style="display:inline;" onsubmit="return confirm('Xóa bản dịch này?');">
+                                    <input type="hidden" name="id" th:value="${t.id}">
+                                    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <button type="submit" class="btn btn-danger" style="padding:8px 12px; font-size:12px;" title="Xóa">
+                                        <i class="fa-solid fa-trash"></i> Xóa
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Trường hợp trống dữ liệu -->
+                    <tr th:if="${category.translations == null or #lists.isEmpty(category.translations)}">
+                        <td colspan="3" style="text-align:center; padding:32px; color:#aab5c8;">
+                            Chưa có bản dịch nào.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+</body>
+</html>

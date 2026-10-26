@@ -54,7 +54,7 @@ public class PoiController {
         model.addAttribute("pois", service.findPois(lang, "", "Approved"));
         model.addAttribute("categories", service.findCategories(lang));
         model.addAttribute("tours", service.findTours(lang));
-        return "poi/home";
+        return "pois/home";
     }
 
     @GetMapping("/pois")

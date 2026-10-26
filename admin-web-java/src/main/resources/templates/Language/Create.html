@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thêm ngôn ngữ - VERSA Admin</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{box-sizing:border-box}body{margin:0;padding:36px;background:#0b1020;color:#edf2fa;font-family:Arial,sans-serif}.wrap{max-width:850px;margin:auto}.subtitle{color:#aab5c8}
+.card{margin-top:24px;padding:28px;border:1px solid #28334a;border-radius:16px;background:#141c2d;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.form-group{margin:0}
+.form-group.full{grid-column:span 2}
+.form-label{display:block;margin-bottom:8px;color:#d5deec;font-size:14px;font-weight:600}
+.form-control{width:100%;padding:13px 16px;border:1px solid #344158;border-radius:10px;background:#0e1524;color:white;font-size:14px}
+.form-control:focus{outline:none;border-color:#5b8cff}
+.validation-summary{background:rgba(69, 31, 42, 0.6);border:1px solid rgba(69, 31, 42, 0.9);color:#ffabb6;padding:12px 16px;border-radius:10px;margin-bottom:20px;font-size:13px}
+.validation-summary p{margin:0}
+.form-actions{display:flex;gap:12px;justify-content:flex-end;flex-wrap:wrap;margin-top:28px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border:0;border-radius:9px;text-decoration:none;cursor:pointer;font-weight:700;font-size:14px}
+.btn-primary{background:#5b8cff;color:white}
+.btn-primary:hover{background:#4a7be8}
+.btn-secondary{background:#29364c;color:white}
+.btn-secondary:hover{background:#34445c}
+</style>
+</head>
+<body>
+
+<main class="wrap">
+    <div class="page-heading">
+        <h1 style="margin:0 0 8px; font-size:28px; font-weight:800;">Thêm ngôn ngữ</h1>
+        <p class="subtitle">Khai báo mã ngôn ngữ. Voice Edge-TTS có thể để trống; hệ thống vẫn dịch chữ và chỉ tạo audio khi có voice.</p>
+    </div>
+
+    <div class="form-shell">
+        <section class="card">
+            <form th:action="@{/admin/languages/create}" th:object="${supportedLanguage}" method="post">
+                <!-- CSRF token trong Spring Security -->
+                <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                
+                <div th:if="${#fields.hasGlobalErrors()}" class="validation-summary">
+                    <p th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
+                </div>
+
+                <!-- Nhúng form con (_LanguageForm.html) -->
+                <div th:replace="Language/_LanguageForm :: form-content"></div>
+
+                <div class="form-actions">
+                    <a th:href="@{/admin/languages}" class="btn btn-secondary">
+                        <i class="fa-solid fa-arrow-left"></i> Hủy
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-plus"></i> Thêm ngôn ngữ
+                    </button>
+                </div>
+            </form>
+        </section>
+    </div>
+</main>
+
+</body>
+</html>

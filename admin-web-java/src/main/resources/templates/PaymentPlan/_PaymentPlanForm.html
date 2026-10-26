@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Payment Plan - VERSA Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+  --bg:#080b12;--surface:#10182a;--surface-2:#151c2b;--text:#f4f7fb;
+  --text-muted:#8f96b0;--border:rgba(143,150,176,.18);
+  --primary:#5b8cff;--shadow:0 18px 50px rgba(0,0,0,.18)
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;padding:32px;background:
+radial-gradient(circle at 12% 10%,#183363,transparent 32%),
+radial-gradient(circle at 90% 90%,#30205d,transparent 30%),#080b12;
+color:var(--text);font-family:"Be Vietnam Pro",sans-serif}
+.page{width:min(920px,100%);margin:auto}
+.card{border:1px solid var(--border);border-radius:24px;background:rgba(16,24,42,.96);box-shadow:var(--shadow)}
+.card-header{padding:26px;border-bottom:1px solid var(--border)}
+.card-header h1{margin:0;font-size:26px;letter-spacing:-.04em}
+.card-header p{margin:7px 0 0;color:var(--text-muted);font-size:13px}
+.form-card{padding:26px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.form-group{display:grid;gap:8px}
+.form-group.full{grid-column:1/-1}
+.form-label{color:#a8b3c7;font-size:12px;font-weight:800}
+.form-control{width:100%;padding:13px 14px;border:1px solid var(--border);border-radius:12px;
+outline:0;background:var(--surface-2);color:var(--text);font:inherit;font-size:13px}
+.form-control:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(91,140,255,.13)}
+textarea.form-control{resize:vertical;min-height:110px}
+.actions{display:flex;gap:10px;margin-top:18px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;
+padding:0 16px;border:1px solid var(--border);border-radius:12px;text-decoration:none;
+font:inherit;font-size:12px;font-weight:800;cursor:pointer}
+.btn-primary{border-color:transparent;background:var(--primary);color:#fff}
+.btn-primary:hover{background:#3f72ed}
+.btn-secondary{background:rgba(148,163,184,.08);color:#d7e2f5}
+.btn-secondary:hover{border-color:var(--primary);color:#fff}
+.validation{display:none;margin-bottom:18px;padding:11px 12px;border-radius:10px;
+border:1px solid rgba(255,101,119,.25);background:rgba(255,101,119,.12);color:#ff8b99;font-size:11px}
+@media(max-width:720px){body{padding:18px}.form-grid{grid-template-columns:1fr}.form-group.full{grid-column:auto}.actions{flex-direction:column}}
+</style>
+</head>
+<body>
+<main class="page">
+  <section class="card">
+    <header class="card-header">
+      <h1><i class="fa-solid fa-layer-group"></i> Quản lý gói thanh toán</h1>
+      <p>Tạo hoặc chỉnh sửa gói dành cho chủ gian hàng và người dùng.</p>
+    </header>
+    <div class="form-card">
+      <div class="validation" id="validationMessage">Vui lòng kiểm tra lại thông tin.</div>
+      <form id="paymentPlanForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="planCode" class="form-label">Mã gói</label>
+            <input id="planCode" name="PlanCode" class="form-control" placeholder="OWNER_BASIC">
+          </div>
+          <div class="form-group">
+            <label for="planName" class="form-label">Tên gói</label>
+            <input id="planName" name="PlanName" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="audience" class="form-label">Đối tượng</label>
+            <select id="audience" name="Audience" class="form-control">
+              <option value="Owner">Chủ gian hàng</option>
+              <option value="Tourist">Người dùng</option>
+              <option value="Both">Cả hai</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="price" class="form-label">Giá VND</label>
+            <input id="price" name="Price" type="number" step="1000" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="durationDays" class="form-label">Thời hạn ngày</label>
+            <input id="durationDays" name="DurationDays" type="number" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="isActive" class="form-label">Trạng thái</label>
+            <select id="isActive" name="IsActive" class="form-control">
+              <option value="true">Bật</option>
+              <option value="false">Tắt</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label for="description" class="form-label">Mô tả</label>
+            <textarea id="description" name="Description" class="form-control" rows="4"></textarea>
+          </div>
+        </div>
+        <div class="actions">
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Lưu</button>
+          <a href="javascript:history.back()" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Quay lại</a>
+        </div>
+      </form>
+    </div>
+  </section>
+</main>
+<script>
+document.getElementById("paymentPlanForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  const code = document.getElementById("planCode").value.trim();
+  const name = document.getElementById("planName").value.trim();
+  const msg = document.getElementById("validationMessage");
+  if(!code || !name){
+    msg.style.display = "block";
+    return;
+  }
+  msg.style.display = "none";
+  alert("Đây là bản HTML tĩnh: dữ liệu chưa được gửi lên server.");
+});
+</script>
+</body>
+</html>

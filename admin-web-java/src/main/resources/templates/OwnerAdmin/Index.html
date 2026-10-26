@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chủ gian hàng - VERSA Admin</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{box-sizing:border-box}body{margin:0;padding:36px;background:#0b1020;color:#edf2fa;font-family:Arial,sans-serif}.wrap{max-width:1400px;margin:auto}.subtitle{color:#aab5c8}
+.page-heading{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:24px}
+.stats-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:24px}
+.stat-card{border:1px solid #28334a;border-radius:16px;padding:20px;background:#141c2d;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.stat-card span{display:block;color:#aab5c8;font-size:13px;font-weight:600;margin-bottom:8px}
+.stat-card strong{display:block;color:#edf2fa;font-size:32px;font-weight:800}
+.card{border:1px solid #28334a;border-radius:16px;background:#141c2d;box-shadow:0 10px 30px rgba(0,0,0,.3);overflow:hidden}
+.table-wrapper{overflow-x:auto}
+.data-table{width:100%;border-collapse:collapse;text-align:left}
+.data-table th{padding:14px 16px;background:#0e1524;color:#d5deec;font-size:13px;border-bottom:1px solid #28334a}
+.data-table td{padding:14px 16px;border-bottom:1px solid #28334a;font-size:14px;color:#edf2fa;vertical-align:middle}
+.data-table tr:hover td{background:rgba(91, 140, 255, 0.03)}
+.badge{display:inline-block;padding:5px 10px;border-radius:8px;font-size:12px;font-weight:600}
+.badge.green{background:rgba(18, 60, 49, 0.6);color:#8df0c0;border:1px solid rgba(18, 60, 49, 0.9)}
+.badge.yellow{background:rgba(64, 53, 20, 0.6);color:#fde047;border:1px solid rgba(64, 53, 20, 0.9)}
+.badge.red{background:rgba(69, 31, 42, 0.6);color:#ffabb6;border:1px solid rgba(69, 31, 42, 0.9)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border:0;border-radius:9px;text-decoration:none;cursor:pointer;font-weight:700;font-size:13px}
+.btn-sm{padding:6px 10px;font-size:12px}
+.btn-primary{background:#5b8cff;color:white}
+.btn-primary:hover{background:#4a7be8}
+.btn-secondary{background:#29364c;color:white}
+.btn-secondary:hover{background:#34445c}
+.btn-danger{background:#451f2a;color:#ffabb6;border:1px solid rgba(244,63,94,0.3)}
+.btn-danger:hover{background:#542533}
+@media (max-width:1024px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){.stats-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<main class="wrap">
+    <div class="page-heading">
+        <div>
+            <h1 style="margin:0 0 8px; font-size:28px; font-weight:800;">Chủ gian hàng</h1>
+            <p class="subtitle" style="margin:0;">Quản lý tài khoản chủ POI, gian hàng và quyền sở hữu địa điểm.</p>
+        </div>
+        <div class="page-actions" style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a th:href="@{/admin/owners/requests}" class="btn btn-secondary">
+                <i class="fa-solid fa-inbox"></i> Yêu cầu POI
+            </a>
+            <a href="/Owner/Account/Register" target="_blank" class="btn btn-secondary">
+                <i class="fa-solid fa-store"></i> Link đăng ký Owner
+            </a>
+            <a th:href="@{/admin/owners/create}" class="btn btn-primary">
+                <i class="fa-solid fa-plus"></i> Thêm chủ gian hàng
+            </a>
+        </div>
+    </div>
+
+    <!-- Khung Thống kê nhanh -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <span>Tổng chủ gian hàng</span>
+            <strong th:text="${ownerProfiles != null ? ownerProfiles.size() : 0}">0</strong>
+        </div>
+        <div class="stat-card">
+            <span>Đang hoạt động</span>
+            <strong th:text="${ownerProfiles != null ? #lists.size(ownerProfiles.?[status == 'Active']) : 0}">0</strong>
+        </div>
+        <div class="stat-card">
+            <span>Chờ duyệt</span>
+            <strong th:text="${ownerProfiles != null ? #lists.size(ownerProfiles.?[status == 'Pending']) : 0}">0</strong>
+        </div>
+        <div class="stat-card">
+            <span>POI đã gán</span>
+            <strong th:text="${totalAssignedPois}">0</strong>
+        </div>
+    </div>
+
+    <!-- Bảng danh sách chủ gian hàng -->
+    <div class="card">
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th style="width: 60px;">#</th>
+                        <th>Gian hàng</th>
+                        <th>Tài khoản</th>
+                        <th>Liên hệ</th>
+                        <th style="width: 80px; text-align:center;">POI</th>
+                        <th>Gói hiện tại</th>
+                        <th style="width: 120px;">Trạng thái</th>
+                        <th style="text-align:center; width: 220px;">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${ownerProfiles != null and not #lists.isEmpty(ownerProfiles)}" th:each="owner : ${ownerProfiles}">
+                        <td th:text="${owner.id}" style="color:#aab5c8; font-weight:600;">1</td>
+                        <td>
+                            <strong style="color:#edf2fa; font-size:15px;" th:text="${owner.businessName}">Business Name</strong><br />
+                            <small style="color:#aab5c8;" th:text="${owner.representativeName}">Representative</small>
+                        </td>
+                        <td>
+                            <span style="font-weight:600; color:#5b8cff;" th:text="${owner.user != null ? owner.user.username : ''}">Username</span><br />
+                            <small style="color:#aab5c8;" th:text="${owner.user != null ? owner.user.email : ''}">email@domain.com</small><br />
+                            <small style="color:#aab5c8;">Login: <b style="color:#edf2fa;" th:text="${owner.user != null ? owner.user.status : ''}">Status</b></small>
+                        </td>
+                        <td>
+                            <span th:text="${owner.phone}">Phone</span><br />
+                            <small style="color:#aab5c8;" th:text="${owner.address}">Address</small>
+                        </td>
+                        <td style="text-align:center;">
+                            <span class="badge" style="background:rgba(91,140,255,0.12); color:#5b8cff; border:1px solid rgba(91,140,255,0.24);" th:text="${owner.pois != null ? owner.pois.size() : 0}">0</span>
+                        </td>
+                        <td>
+                            <!-- Hiển thị gói cước đang hoạt động -->
+                            <th:block th:with="activeSub=${owner.subscriptions != null ? owner.subscriptions.?[status == 'Active'] : null}">
+                                <div th:if="${activeSub != null and not #lists.isEmpty(activeSub)}">
+                                    <strong style="color:#8df0c0;" th:text="${activeSub[0].paymentPlan != null ? activeSub[0].paymentPlan.planName : 'Gói cước'}">Plan Name</strong><br />
+                                    <small style="color:#aab5c8;" th:text="'Hết hạn: ' + ${#temporals.format(activeSub[0].expiresAt, 'dd/MM/yyyy')}">Hết hạn: 01/01/2026</small>
+                                </div>
+                                <div th:unless="${activeSub != null and not #lists.isEmpty(activeSub)}">
+                                    <span class="badge red">Chưa có gói</span>
+                                </div>
+                            </th:block>
+                        </td>
+                        <td>
+                            <span class="badge" th:classappend="${owner.status == 'Active' ? ' green' : (owner.status == 'Pending' ? ' yellow' : ' red')}" 
+                                  th:text="${owner.status}">Status</span>
+                        </td>
+                        <td style="text-align:center;">
+                            <div style="display:flex; gap:6px; justify-content:center; align-items:center; flex-wrap:wrap;">
+                                <a th:href="@{/admin/owners/edit/{id}(id=${owner.id})}" class="btn btn-sm btn-secondary" title="Chỉnh sửa">
+                                    <i class="fa-solid fa-pen"></i> Sửa
+                                </a>
+                                <a th:href="@{/admin/owners/assign-poi/{id}(id=${owner.id})}" class="btn btn-sm btn-secondary" title="Gán POI">
+                                    <i class="fa-solid fa-link"></i> Gán POI
+                                </a>
+                                
+                                <!-- Nút Duyệt nếu ở trạng thái Pending -->
+                                <form th:if="${owner.status == 'Pending' or (owner.user != null and owner.user.status == 'pending')}" 
+                                      th:action="@{/admin/owners/approve}" method="post" style="display:inline; margin:0;">
+                                    <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                    <input type="hidden" name="id" th:value="${owner.id}" />
+                                    <button type="submit" class="btn btn-sm btn-primary" title="Duyệt tài khoản">
+                                        <i class="fa-solid fa-check"></i> Duyệt
+                                    </button>
+                                </form>
+
+                                <!-- Nút Khóa tài khoản -->
+                                <form th:unless="${owner.status == 'Locked'}" 
+                                      th:action="@{/admin/owners/lock}" method="post" style="display:inline; margin:0;" onsubmit="return confirm('Khóa tài khoản chủ gian hàng này?');">
+                                    <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                    <input type="hidden" name="id" th:value="${owner.id}" />
+                                    <button type="submit" class="btn btn-sm btn-danger" title="Khóa tài khoản">
+                                        <i class="fa-solid fa-lock"></i> Khóa
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Trường hợp danh sách trống -->
+                    <tr th:if="${ownerProfiles == null or #lists.isEmpty(ownerProfiles)}">
+                        <td colspan="8" style="text-align:center; padding:48px 20px; color:#aab5c8;">
+                            Chưa có chủ gian hàng nào trong hệ thống.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

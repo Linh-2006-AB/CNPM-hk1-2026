@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thêm Beacon mới - VERSA Admin</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{box-sizing:border-box}body{margin:0;padding:36px;background:#0b1020;color:#edf2fa;font-family:Arial,sans-serif}.wrap{max-width:850px;margin:auto}.subtitle{color:#aab5c8}.card{margin-top:24px;padding:28px;border:1px solid #28334a;border-radius:16px;background:#141c2d}.card h3{margin-top:0}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.form-group{margin:0}
+.form-group.full{grid-column:span 2}
+.form-label{display:block;margin-bottom:8px;color:#d5deec;font-size:14px;font-weight:600}
+.form-control{width:100%;padding:13px 16px;border:1px solid #344158;border-radius:10px;background:#0e1524;color:white;font-size:14px}
+.form-control:focus{outline:none;border-color:#5b8cff}
+select.form-control{cursor:pointer}
+.actions{display:flex;gap:12px;justify-content:flex-end;flex-wrap:wrap;margin-top:28px}
+.btn,button.submit{padding:12px 20px;border:0;border-radius:9px;text-decoration:none;cursor:pointer;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:8px}
+.btn-secondary{background:#29364c;color:white}
+.btn-secondary:hover{background:#34445c}
+.btn-primary{background:#5b8cff;color:white}
+.btn-primary:hover{background:#4a7be8}
+</style>
+</head>
+<body>
+<main class="wrap">
+    <h1>Thêm Beacon mới</h1>
+    <p class="subtitle">Thêm thiết bị phát sóng Bluetooth (iBeacon) vào hệ thống.</p>
+
+    <section class="card">
+        <form th:action="@{/beacons/create}" th:object="${beacon}" method="post">
+            
+            <!-- CSRF Token (Nếu Spring Security bật CSRF) -->
+            <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+            <div class="form-grid">
+                <!-- Chọn điểm tham quan -->
+                <div class="form-group full">
+                    <label class="form-label">Điểm tham quan (POI) *</label>
+                    <select class="form-control" th:field="*{poiId}" required>
+                        <option value="">-- Chọn điểm tham quan được gán --</option>
+                        <option th:each="poi : ${pois}" th:value="${poi.id}" th:text="${poi.name}"></option>
+                    </select>
+                    <small style="color:#aab5c8;font-size:12px;margin-top:6px;display:block;">
+                        Khi thiết bị di động quét thấy Beacon này, hệ thống sẽ kích hoạt POI tương ứng.
+                    </small>
+                </div>
+
+                <!-- UUID -->
+                <div class="form-group full">
+                    <label class="form-label">UUID (Universally Unique Identifier) *</label>
+                    <input class="form-control" th:field="*{uuid}" type="text" required placeholder="VD: B9407F30-F5F8-466E-AFF9-25556B57FE6D">
+                </div>
+
+                <!-- Major -->
+                <div class="form-group">
+                    <label class="form-label">Major *</label>
+                    <input class="form-control" th:field="*{major}" type="number" required placeholder="VD: 1">
+                </div>
+
+                <!-- Minor -->
+                <div class="form-group">
+                    <label class="form-label">Minor *</label>
+                    <input class="form-control" th:field="*{minor}" type="number" required placeholder="VD: 1">
+                </div>
+
+                <!-- MAC Address -->
+                <div class="form-group">
+                    <label class="form-label">Địa chỉ MAC (Không bắt buộc)</label>
+                    <input class="form-control" th:field="*{macAddress}" type="text" placeholder="VD: 00:11:22:33:44:55">
+                </div>
+
+                <!-- Placement Note -->
+                <div class="form-group">
+                    <label class="form-label">Ghi chú vị trí đặt (Placement Note)</label>
+                    <input class="form-control" th:field="*{placementNote}" type="text" placeholder="VD: Gắn trên tường phòng số 2">
+                </div>
+            </div>
+
+            <div class="actions">
+                <a th:href="@{/beacons}" class="btn btn-secondary">
+                    <i class="fa-solid fa-arrow-left"></i> Quay lại
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-floppy-disk"></i> Lưu thiết bị
+                </button>
+            </div>
+
+        </form>
+    </section>
+</main>
+</body>
+</html>

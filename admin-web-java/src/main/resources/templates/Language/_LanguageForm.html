@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Biểu mẫu ngôn ngữ - VERSA Admin</title>
+<style>
+*{box-sizing:border-box}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;font-family:"Be Vietnam Pro",sans-serif;color:#f4f7fb}.form-group{display:flex;flex-direction:column;gap:8px}.form-group.full{grid-column:1/-1}.form-label{font-size:12px;font-weight:700;color:#a8b3c7}.form-control{width:100%;padding:12px;border:1px solid rgba(148,163,184,.2);border-radius:10px;background:#151c2b;color:#f4f7fb}.form-control:focus{outline:0;border-color:#5b8cff;box-shadow:0 0 0 3px rgba(91,140,255,.13)}.field-validation-error{font-size:11px;color:#ff8b99}.form-help{color:#a8b3c7;font-size:12px;line-height:1.6}.check-label{display:flex;align-items:flex-start;gap:9px;line-height:1.6;font-size:12px}.check-label input{accent-color:#5b8cff;margin-top:3px}@media(max-width:620px){.form-grid{grid-template-columns:1fr}.form-group.full{grid-column:auto}}
+</style></head><body>
+<div class="form-grid" th:fragment="languageForm">
+<div class="form-group"><label for="languageCode" class="form-label">Mã ngôn ngữ</label>
+<input id="languageCode" name="languageCode" class="form-control" placeholder="Ví dụ: th, de, es, it" required th:value="${supportedLanguage != null ? supportedLanguage.languageCode : ''}" th:readonly="${supportedLanguage != null and !#strings.isEmpty(supportedLanguage.languageCode)}">
+<span class="field-validation-error" th:if="${#fields.hasErrors('languageCode')}" th:errors="*{languageCode}"></span>
+<small class="form-help">Nên dùng mã ISO ngắn: en, vi, ja, ko, zh, th, de, es...</small></div>
+<div class="form-group"><label for="languageName" class="form-label">Tên ngôn ngữ</label>
+<input id="languageName" name="languageName" class="form-control" placeholder="Ví dụ: Thai, Deutsch, Español" required th:value="${supportedLanguage != null ? supportedLanguage.languageName : ''}">
+<span class="field-validation-error" th:if="${#fields.hasErrors('languageName')}" th:errors="*{languageName}"></span></div>
+<div class="form-group full"><label for="edgeTtsVoice" class="form-label">Edge-TTS voice</label>
+<input id="edgeTtsVoice" name="edgeTtsVoice" class="form-control" placeholder="Ví dụ: th-TH-PremwadeeNeural, de-DE-KatjaNeural. Có thể để trống nếu chưa có voice." th:value="${supportedLanguage != null ? supportedLanguage.edgeTtsVoice : ''}">
+<span class="field-validation-error" th:if="${#fields.hasErrors('edgeTtsVoice')}" th:errors="*{edgeTtsVoice}"></span>
+<small class="form-help">Không bắt buộc. Nếu để trống, hệ thống vẫn tạo bản dịch chữ nhưng sẽ bỏ qua tạo audio để không làm crash tác vụ.</small></div>
+<div class="form-group full"><label class="check-label"><input type="checkbox" name="isActive" value="true" th:checked="${supportedLanguage != null and supportedLanguage.isActive}">Bật ngôn ngữ này cho web/app và dịch tự động nội dung còn thiếu</label></div>
+</div></body></html>
