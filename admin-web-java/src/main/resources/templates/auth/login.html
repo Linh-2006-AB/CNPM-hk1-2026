@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Đăng nhập · Versa Tour Guide</title>
+<style>body{margin:0;font-family:Arial,sans-serif;background:#f1f5f9;color:#0f172a;min-height:100vh;display:grid;place-items:center}.box{width:min(460px,92vw);background:white;padding:32px;border-radius:18px;box-shadow:0 12px 40px #0f172a18}h1{margin-top:0}.muted{color:#64748b}.field{margin:16px 0}.field label{display:block;font-weight:700;margin-bottom:7px}.field input{width:100%;box-sizing:border-box;padding:12px;border:1px solid #cbd5e1;border-radius:9px;font-size:15px}.btn{border:0;border-radius:9px;padding:12px 16px;background:#0f766e;color:white;font-weight:700;cursor:pointer;width:100%}.links{display:flex;justify-content:space-between;gap:10px;margin-top:18px;flex-wrap:wrap}.links a{color:#0f766e;text-decoration:none}.alert{padding:11px 13px;border-radius:9px;margin:12px 0}.err{background:#fee2e2;color:#991b1b}.ok{background:#dcfce7;color:#166534}</style></head>
+<body><main class="box"><h1>Đăng nhập</h1><p class="muted">Admin, Owner và User dùng chung cổng đăng nhập.</p>
+<div th:if="${error}" class="alert err" th:text="${error}"></div><div th:if="${success}" class="alert ok" th:text="${success}"></div>
+<form method="post" action="/auth/login"><div class="field"><label>Tài khoản / Email</label><input name="identifier" required autofocus></div><div class="field"><label>Mật khẩu</label><input name="password" type="password" required></div><button class="btn">Đăng nhập</button></form>
+<div class="links"><a href="/">← Về trang chủ</a><a href="/auth/register">Đăng ký tài khoản</a></div></main></body></html>

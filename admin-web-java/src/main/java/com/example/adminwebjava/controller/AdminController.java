@@ -26,21 +26,24 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.example.adminwebjava.services.TourGuideService;
+import com.example.adminwebjava.services.LanVisitorTrackingService;
 
 /**
  * Consolidated admin endpoints for the Java migration.
  * The original ASP.NET controllers are grouped here intentionally; the SQLite schema is kept unchanged.
- * This demo project does not yet implement the original ASP.NET Identity/JWT authorization layer.
+ * Web authentication is handled by AuthController with session-based role checks for admin/owner pages.
  */
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
     private final TourGuideService service;
     private final JdbcTemplate jdbc;
+    private final LanVisitorTrackingService lanVisitorTrackingService;
 
-    public AdminController(TourGuideService service, JdbcTemplate jdbc) {
+    public AdminController(TourGuideService service, JdbcTemplate jdbc, LanVisitorTrackingService lanVisitorTrackingService) {
         this.service = service;
         this.jdbc = jdbc;
+        this.lanVisitorTrackingService = lanVisitorTrackingService;
     }
 
     @GetMapping("/pois/{id}/qr")
@@ -457,6 +460,16 @@ public class AdminController {
         Long id = jdbc.queryForObject("SELECT last_insert_rowid()", Long.class);
         log("INSERT", "sync_versions", id, "Tạo phiên bản đồng bộ " + version);
         return Map.of("success", true, "id", id == null ? 0 : id, "versionNumber", version);
+    }
+
+    @ResponseBody @GetMapping("/api/lan-traffic")
+    public Map<String, Object> lanTraffic() {
+        return lanVisitorTrackingService.dashboardStats();
+    }
+
+    @ResponseBody @GetMapping("/api/lan-visitors")
+    public List<Map<String, Object>> lanVisitors() {
+        return lanVisitorTrackingService.onlineLanVisitors();
     }
 
     @ResponseBody @GetMapping("/api/visitor-traffic")

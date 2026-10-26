@@ -79,7 +79,16 @@ a.metric-card:hover,a.quick-card:hover{transform:translateY(-3px);border-color:r
 <a class="metric-card" href="/admin/purchases"><span class="metric-top"><span class="metric-icon"><i class="fa-solid fa-utensils"></i></span><span class="metric-pill">Menu</span></span><span class="metric-value">57</span><span class="metric-label">Đơn menu hôm nay · 12.450.000 đ</span></a>
 </section>
 
-<div class="section-heading"><div><h2>2. Việc cần xử lý</h2><p>Ưu tiên các tác vụ quan trọng trước khi xem biểu đồ chi tiết.</p></div></div>
+<div class="section-heading"><div><h2>2. Người đang truy cập trong LAN</h2><p>Số liệu lấy trực tiếp từ các phiên trình duyệt truy cập máy chủ Spring Boot. Phiên được xem là online nếu có hoạt động trong 5 phút gần nhất.</p></div><a href="/admin/visitor-traffic" class="btn btn-primary btn-sm"><i class="fa-solid fa-users-viewfinder"></i>Xem chi tiết</a></div>
+<section class="overview-grid" id="lanTrafficDashboard">
+<a class="metric-card" href="/admin/visitor-traffic"><span class="metric-top"><span class="metric-icon"><i class="fa-solid fa-wifi"></i></span><span class="metric-pill">LAN · 5 phút</span></span><span class="metric-value" id="lanOnlineIps">--</span><span class="metric-label">Thiết bị/IP LAN đang truy cập</span></a>
+<a class="metric-card" href="/admin/visitor-traffic"><span class="metric-top"><span class="metric-icon"><i class="fa-solid fa-user-group"></i></span><span class="metric-pill">Phiên</span></span><span class="metric-value" id="lanOnlineSessions">--</span><span class="metric-label">Phiên khách đang hoạt động trong LAN</span></a>
+<a class="metric-card" href="/admin/visitor-traffic"><span class="metric-top"><span class="metric-icon"><i class="fa-solid fa-calendar-day"></i></span><span class="metric-pill">Hôm nay</span></span><span class="metric-value" id="lanTodayIps">--</span><span class="metric-label">Thiết bị/IP LAN đã truy cập hôm nay</span></a>
+<a class="metric-card" href="/admin/visitor-traffic"><span class="metric-top"><span class="metric-icon"><i class="fa-solid fa-globe"></i></span><span class="metric-pill">Tất cả</span></span><span class="metric-value" id="todayIps">--</span><span class="metric-label">IP khác nhau đã truy cập hôm nay</span></a>
+</section>
+<section class="panel-card" id="lanVisitorPanel"><div class="panel-card-header"><div><h3 class="panel-title"><i class="fa-solid fa-network-wired"></i>Thiết bị LAN đang hoạt động</h3><div class="panel-subtitle">IP được lấy từ kết nối tới máy chủ. Không phải mọi IP đều tương ứng chính xác với một người.</div></div><span class="metric-pill" id="lanServerHint">Máy chủ: --</span></div><div class="panel-card-body"><div class="location-table-wrap"><table class="dashboard-table"><thead><tr><th>IP</th><th>Vai trò</th><th>Trang cuối</th><th>Lần cuối</th></tr></thead><tbody id="lanVisitorRows"><tr><td colspan="4">Đang tải...</td></tr></tbody></table></div></div></section>
+
+<div class="section-heading"><div><h2>3. Việc cần xử lý</h2><p>Ưu tiên các tác vụ quan trọng trước khi xem biểu đồ chi tiết.</p></div></div>
 <section class="focus-grid">
 <div class="panel-card"><div class="panel-card-header"><div><h3 class="panel-title"><i class="fa-solid fa-list-check"></i>Trạng thái POI</h3><div class="panel-subtitle">Theo dõi POI đã duyệt, chờ duyệt và bị từ chối.</div></div><a href="/admin/approval/poi-pending" class="btn btn-sm">Xem duyệt POI</a></div>
 <div class="panel-card-body"><div class="action-summary-grid">
@@ -97,7 +106,7 @@ a.metric-card:hover,a.quick-card:hover{transform:translateY(-3px);border-color:r
 </div></div></div>
 </section>
 
-<div class="section-heading"><div><h2>3. Du khách & mật độ tại địa điểm</h2><p>Biết khách vào quán nào, khung giờ nào đông và địa điểm nào đang có nhiều tương tác.</p></div><a href="/admin/visitor-traffic" class="btn btn-primary btn-sm"><i class="fa-solid fa-filter"></i>Lọc theo quán/giờ</a></div>
+<div class="section-heading"><div><h2>4. Du khách & mật độ tại địa điểm</h2><p>Biết khách vào quán nào, khung giờ nào đông và địa điểm nào đang có nhiều tương tác.</p></div><a href="/admin/visitor-traffic" class="btn btn-primary btn-sm"><i class="fa-solid fa-filter"></i>Lọc theo quán/giờ</a></div>
 <section class="visitor-grid">
 <div class="panel-card"><div class="panel-card-header"><div><h3 class="panel-title"><i class="fa-solid fa-clock"></i>Lượt du khách theo khung giờ hôm nay</h3><div class="panel-subtitle">Check-in là lượt vào; tương tác gồm nghe audio/TTS và hành vi trên web/app.</div></div></div><div class="panel-card-body"><div class="chart-box"><canvas id="visitorTrafficChart"></canvas></div><p class="visitor-note">Hệ thống chưa có nút check-out/rời địa điểm, nên cột “đang hoạt động” được ước tính từ tương tác trong 30 phút gần nhất.</p></div></div>
 <div class="panel-card"><div class="panel-card-header"><div><h3 class="panel-title"><i class="fa-solid fa-triangle-exclamation"></i>Cần chú ý</h3><div class="panel-subtitle">Gợi ý vận hành nhanh cho admin.</div></div></div><div class="panel-card-body"><div class="alert-stack">
@@ -115,13 +124,13 @@ a.metric-card:hover,a.quick-card:hover{transform:translateY(-3px);border-color:r
 <tr><td><span class="location-name"><strong>Phố đi bộ Nguyễn Huệ</strong></span></td><td><strong>22</strong></td><td>84</td><td>91</td><td>288</td><td><strong>0</strong></td><td>0 đ</td><td>16:52</td></tr>
 </tbody></table></div></div></section>
 
-<div class="section-heading"><div><h2>4. Phân tích tương tác</h2><p>Xem người dùng đang nghe nội dung như thế nào và chọn ngôn ngữ nào nhiều nhất.</p></div></div>
+<div class="section-heading"><div><h2>5. Phân tích tương tác</h2><p>Xem người dùng đang nghe nội dung như thế nào và chọn ngôn ngữ nào nhiều nhất.</p></div></div>
 <section class="analytics-grid">
 <div class="panel-card"><div class="panel-card-header"><div><h3 class="panel-title"><i class="fa-solid fa-chart-line"></i>Lượt phát 7 ngày</h3><div class="panel-subtitle">Số lượt tương tác/nghe audio theo ngày.</div></div><a href="/admin/api/audio-history" target="_blank" class="btn btn-sm">Xem lịch sử</a></div><div class="panel-card-body"><div class="chart-box"><canvas id="lineChart"></canvas></div></div></div>
 <div class="panel-card"><div class="panel-card-header"><div><h3 class="panel-title"><i class="fa-solid fa-chart-pie"></i>Ngôn ngữ được chọn</h3><div class="panel-subtitle">Tỷ trọng ngôn ngữ trong lịch sử phát.</div></div></div><div class="panel-card-body"><div class="chart-box small"><canvas id="pieChart"></canvas></div></div></div>
 </section>
 
-<div class="section-heading"><div><h2>5. Bản đồ & chất lượng nội dung</h2><p>Kiểm tra vị trí POI, vùng tương tác và những địa điểm đang được đánh giá tốt.</p></div></div>
+<div class="section-heading"><div><h2>6. Bản đồ & chất lượng nội dung</h2><p>Kiểm tra vị trí POI, vùng tương tác và những địa điểm đang được đánh giá tốt.</p></div></div>
 <section class="content-grid">
 <div class="panel-card map-card"><div class="panel-card-header"><div><h3 class="panel-title"><i class="fa-solid fa-map-location-dot"></i>Bản đồ điểm tham quan</h3><div class="panel-subtitle">128 POI đã thêm. Heatmap thể hiện vị trí tương tác của du khách.</div></div><button type="button" class="btn btn-sm" id="btnLocateDashboard"><i class="fa-solid fa-location-crosshairs"></i>Vị trí của tôi</button></div><div class="panel-card-body"><div id="heatmap-container"></div><div class="map-legend"><span class="legend-item"><span class="legend-dot dot-approved"></span>Đã duyệt</span><span class="legend-item"><span class="legend-dot dot-pending"></span>Chờ duyệt</span><span class="legend-item"><span class="legend-dot dot-rejected"></span>Từ chối</span><span class="legend-item"><span class="legend-dot dot-heat"></span>Heatmap lượt tương tác</span></div></div></div>
 <aside class="side-stack">
@@ -139,7 +148,7 @@ a.metric-card:hover,a.quick-card:hover{transform:translateY(-3px);border-color:r
 </tbody></table></div></div>
 </aside></section>
 
-<div class="section-heading"><div><h2>6. Hoạt động gần đây</h2><p>Theo dõi các lượt tương tác mới nhất để biết hệ thống đang được sử dụng ra sao.</p></div><a href="/admin/activity-log" class="btn btn-sm">Xem tất cả</a></div>
+<div class="section-heading"><div><h2>7. Hoạt động gần đây</h2><p>Theo dõi các lượt tương tác mới nhất để biết hệ thống đang được sử dụng ra sao.</p></div><a href="/admin/activity-log" class="btn btn-sm">Xem tất cả</a></div>
 <section class="panel-card"><div class="panel-card-body"><div class="location-table-wrap"><table class="dashboard-table"><thead><tr><th>Thời gian</th><th>POI</th><th>Ngôn ngữ</th></tr></thead><tbody>
 <tr><td>26/10 17:22</td><td><strong>Chợ Bến Thành</strong></td><td><span class="lang-pill">VI</span></td></tr>
 <tr><td>26/10 17:19</td><td><strong>Dinh Độc Lập</strong></td><td><span class="lang-pill">EN</span></td></tr>
@@ -154,6 +163,30 @@ a.metric-card:hover,a.quick-card:hover{transform:translateY(-3px);border-color:r
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 const textMuted='#8f96b0', border='rgba(143,150,176,.18)', surface='#10182a';
+
+async function loadLanTraffic(){
+  try {
+    const [statsRes, visitorsRes] = await Promise.all([fetch('/admin/api/lan-traffic',{cache:'no-store'}), fetch('/admin/api/lan-visitors',{cache:'no-store'})]);
+    if(!statsRes.ok || !visitorsRes.ok) throw new Error('Không tải được dữ liệu LAN');
+    const stats = await statsRes.json();
+    const visitors = await visitorsRes.json();
+    document.getElementById('lanOnlineIps').textContent = Number(stats.lanOnlineIps ?? 0).toLocaleString('vi-VN');
+    document.getElementById('lanOnlineSessions').textContent = Number(stats.lanOnlineSessions ?? 0).toLocaleString('vi-VN');
+    document.getElementById('lanTodayIps').textContent = Number(stats.lanTodayIps ?? 0).toLocaleString('vi-VN');
+    document.getElementById('todayIps').textContent = Number(stats.todayIps ?? 0).toLocaleString('vi-VN');
+    document.getElementById('lanServerHint').textContent = 'Máy chủ: ' + (stats.serverIpHint || '--');
+    const tbody=document.getElementById('lanVisitorRows');
+    if(!visitors.length){ tbody.innerHTML='<tr><td colspan="4">Chưa có thiết bị LAN nào hoạt động trong 5 phút gần nhất.</td></tr>'; return; }
+    tbody.innerHTML=visitors.map(v=>`<tr><td><strong>${escapeHtml(v.ip || '--')}</strong></td><td><span class="lang-pill">${escapeHtml(v.role || 'Guest')}</span></td><td>${escapeHtml(v.lastPath || '--')}</td><td>${escapeHtml(v.lastSeen || '--')}</td></tr>`).join('');
+  } catch(err) {
+    document.getElementById('lanVisitorRows').innerHTML='<tr><td colspan="4">Không lấy được dữ liệu truy cập LAN.</td></tr>';
+    console.error(err);
+  }
+}
+function escapeHtml(value){ return String(value).replace(/[&<>\"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#039;'}[c])); }
+loadLanTraffic();
+setInterval(loadLanTraffic, 30000);
+
 
 new Chart(document.getElementById('visitorTrafficChart'),{
  type:'bar',

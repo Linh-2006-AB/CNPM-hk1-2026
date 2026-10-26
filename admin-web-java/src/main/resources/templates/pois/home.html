@@ -9,7 +9,7 @@
   </style>
 </head>
 <body>
-<header><strong>VERSA TOUR GUIDE</strong><nav><a href="/">Trang chủ</a><a href="/pois">Địa điểm</a><a href="/tours">Tour du lịch</a><a href="/about">Giới thiệu</a><a href="/contact">Liên hệ</a></nav></header>
+<header><strong>VERSA TOUR GUIDE</strong><nav><a href="/">Trang chủ</a><a href="/pois">Địa điểm</a><a href="/tours">Tour du lịch</a><a href="/about">Giới thiệu</a><a href="/contact">Liên hệ</a> <span th:if="${session.authRole == null}"><a href="/auth/login">Đăng nhập</a><a href="/auth/register">Đăng ký</a></span><span th:if="${session.authRole != null}"><a th:if="${session.authRole == 'Admin'}" href="/admin/dashboard">Quản trị</a><a th:if="${session.authRole == 'Owner'}" href="/owner/dashboard">Owner</a><span th:if="${session.authRole == 'User'}" style="margin-right:12px">Xin chào, <span th:text="${session.authUsername}">User</span></span><form th:if="${session.authRole != null}" method="post" action="/auth/logout" style="display:inline"><button style="border:0;background:none;color:white;cursor:pointer;font:inherit">Đăng xuất</button></form></span></nav></header>
 <section class="hero"><h1>Khám phá Việt Nam theo cách của bạn</h1><p>Khám phá những địa điểm thú vị và nghe thuyết minh ngay trong hành trình.</p><a class="btn" href="/pois">Khám phá địa điểm</a></section>
 <main class="wrap">
   <h2>Địa điểm nổi bật</h2>

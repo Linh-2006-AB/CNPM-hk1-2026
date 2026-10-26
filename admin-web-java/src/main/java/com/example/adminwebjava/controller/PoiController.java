@@ -65,7 +65,7 @@ public class PoiController {
         model.addAttribute("lang", lang);
         model.addAttribute("keyword", keyword);
         model.addAttribute("pois", service.findPois(lang, keyword, status.isBlank() ? "Approved" : status));
-        return "poi/list";
+        return "pois/list";
     }
 
     @GetMapping("/pois/{id}")
@@ -77,6 +77,16 @@ public class PoiController {
         model.addAttribute("media", jdbc.queryForList("SELECT Id AS id, MediaType AS mediaType, MediaUrl AS mediaUrl, SortOrder AS sortOrder FROM media_assets WHERE PoiId=? ORDER BY SortOrder, Id", id));
         model.addAttribute("reviews", jdbc.queryForList("SELECT Id AS id, TouristId AS touristId, Rating AS rating, Comment AS comment, CreatedAt AS createdAt FROM poi_reviews WHERE PoiId=? ORDER BY Id DESC LIMIT 100", id));
         return "pois/detail";
+    }
+
+    @GetMapping("/about")
+    public String about() {
+        return "pois/about";
+    }
+
+    @GetMapping("/contact")
+    public String contact() {
+        return "pois/contact";
     }
 
     @GetMapping("/tours")
