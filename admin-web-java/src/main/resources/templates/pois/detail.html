@@ -1,1 +1,114 @@
-<!DOCTYPE html><html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chi tiết địa điểm</title><style>body{font-family:Arial,sans-serif;max-width:900px;margin:30px auto;padding:0 18px;color:#1f2937;line-height:1.6}a{color:#0f766e}.panel{background:#f8fafc;padding:20px;border-radius:10px}audio,video{max-width:100%}</style></head><body><p><a href="/pois">← Danh sách địa điểm</a></p><h1 th:text="${poi['name']}">Địa điểm</h1><section class="panel"><p th:text="${poi['shortDescription']}"></p><div th:utext="${poi['fullDescription']}"></div></section><h2>Thuyết minh</h2><audio controls th:if="${poi['audioUrl'] != null and !#strings.isEmpty(poi['audioUrl'])}" th:src="${poi['audioUrl']}"></audio><video controls th:if="${poi['videoUrl'] != null and !#strings.isEmpty(poi['videoUrl'])}" th:src="${poi['videoUrl']}"></video><div th:each="item : ${media}"><audio controls th:if="${#strings.toLowerCase(item['mediaType'].toString()).contains('audio')}" th:src="${item['mediaUrl']}"></audio><video controls th:if="${#strings.toLowerCase(item['mediaType'].toString()).contains('video')}" th:src="${item['mediaUrl']}"></video></div><h2>Đánh giá</h2><div th:each="review : ${reviews}" class="panel"><strong th:text="${'Đánh giá: ' + review['rating'] + '/5'}">Đánh giá</strong><p th:text="${review['comment']}"></p></div><p th:if="${reviews == null or reviews.isEmpty()}">Chưa có đánh giá.</p></body></html>
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title th:text="${poi['name'] + ' - Thuyết minh'}">Chi tiết địa điểm</title>
+<style>
+body{font-family:Arial,sans-serif;max-width:1000px;margin:30px auto;padding:0 18px;color:#1f2937;line-height:1.6;background:#f8fafc}
+a{color:#0f766e}.panel{background:#fff;padding:20px;border-radius:14px;margin:16px 0;box-shadow:0 4px 18px rgba(15,23,42,.06)}
+.hero{overflow:hidden;padding:0}.hero img{width:100%;max-height:420px;object-fit:cover;display:block;background:#e2e8f0}.hero-content{padding:22px}.muted{color:#64748b}.media-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}.media-card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px}.media-card img{width:100%;height:220px;object-fit:cover;border-radius:10px;background:#e2e8f0}.media-card audio,.media-card video{width:100%;margin-top:10px}.audio-card{background:linear-gradient(135deg,#ecfeff,#f0fdfa);border:1px solid #99f6e4}.audio-title{font-weight:700;font-size:18px}.audio-meta{font-size:14px;color:#64748b;margin:4px 0 10px}.back{display:inline-block;margin-bottom:8px}.tts-btn{border:0;border-radius:10px;padding:11px 16px;background:#0f766e;color:#fff;font-weight:700;cursor:pointer}.tts-btn.secondary{background:#475569}.tts-btn:hover{filter:brightness(1.05)}
+@media(max-width:640px){body{margin:15px auto}.hero img{max-height:280px}.media-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<a class="back" href="/pois">← Danh sách địa điểm</a>
+
+<section class="panel hero">
+  <img th:if="${poi['imageUrl'] != null and !#strings.isEmpty(poi['imageUrl'])}"
+       th:src="${poi['imageUrl']}"
+       th:alt="${poi['name']}"
+       onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+  <div style="display:none;padding:50px 22px;text-align:center;background:#e2e8f0;color:#64748b">Chưa có ảnh hiển thị cho địa điểm này.</div>
+  <div class="hero-content">
+    <h1 th:text="${poi['name']}">Địa điểm</h1>
+    <p class="muted" th:text="${poi['shortDescription']}"></p>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Giới thiệu địa điểm</h2>
+  <div th:utext="${poi['fullDescription']}"></div>
+</section>
+
+<section class="panel">
+  <h2>🎧 Thuyết minh</h2>
+  <p class="muted">Nghe nội dung thuyết minh ngay trên trang địa điểm.</p>
+
+  <div class="media-card audio-card" th:if="${poi['audioUrl'] != null and !#strings.isEmpty(poi['audioUrl'])}">
+    <div class="audio-title">🎙️ Thuyết minh chính</div>
+    <div class="audio-meta" th:text="${lang == 'en' ? 'English' : 'Tiếng Việt'}">Tiếng Việt</div>
+    <audio class="poi-audio" controls preload="metadata" th:src="${poi['audioUrl']}" th:data-poi-id="${poi['id']}" th:data-lang="${lang}"></audio>
+  </div>
+
+  <div class="media-card audio-card" th:if="${(poi['audioUrl'] == null or #strings.isEmpty(poi['audioUrl'])) and poi['ttsScript'] != null and !#strings.isEmpty(poi['ttsScript'])}">
+    <div class="audio-title">🔊 Thuyết minh bằng giọng đọc</div>
+    <div class="audio-meta">Dữ liệu thuyết minh đã có trong database · trình duyệt đọc trực tiếp</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+      <button type="button" class="tts-btn" id="ttsPlay" th:data-text="${poi['ttsScript']}" th:data-lang="${lang}" th:data-poi-id="${poi['id']}">▶ Nghe thuyết minh</button>
+      <button type="button" class="tts-btn secondary" id="ttsStop">■ Dừng</button>
+    </div>
+  </div>
+
+  <div class="media-grid" th:if="${media != null and !media.isEmpty()}">
+    <div class="media-card" th:each="item : ${media}">
+      <img th:if="${item['mediaType'] != null and #strings.toLowerCase(item['mediaType'].toString()).contains('image')}"
+           th:src="${item['mediaUrl']}" th:alt="${poi['name'] + ' - hình ảnh'}"
+           onerror="this.style.display='none';">
+      <div th:if="${item['mediaType'] != null and #strings.toLowerCase(item['mediaType'].toString()).contains('audio')}">
+        <div class="audio-title">🎧 Thuyết minh bổ sung</div>
+        <audio class="poi-audio" controls preload="metadata" th:src="${item['mediaUrl']}" th:data-poi-id="${poi['id']}"></audio>
+      </div>
+      <video controls preload="metadata"
+             th:if="${item['mediaType'] != null and #strings.toLowerCase(item['mediaType'].toString()).contains('video')}"
+             th:src="${item['mediaUrl']}"></video>
+    </div>
+  </div>
+
+  <p class="muted" th:if="${(poi['audioUrl'] == null or #strings.isEmpty(poi['audioUrl'])) and (media == null or media.isEmpty())}">
+    Địa điểm này chưa có file âm thanh thuyết minh trong dữ liệu.
+  </p>
+</section>
+
+<section class="panel" th:if="${media != null and !media.isEmpty()}">
+  <h2>🖼️ Hình ảnh & media</h2>
+  <div class="media-grid">
+    <div class="media-card" th:each="item : ${media}" th:if="${item['mediaType'] != null and #strings.toLowerCase(item['mediaType'].toString()).contains('image')}">
+      <img th:src="${item['mediaUrl']}" th:alt="${poi['name']}" onerror="this.style.display='none';">
+    </div>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Đánh giá</h2>
+  <div th:each="review : ${reviews}" class="panel"><strong th:text="${'Đánh giá: ' + review['rating'] + '/5'}">Đánh giá</strong><p th:text="${review['comment']}"></p></div>
+  <p th:if="${reviews == null or reviews.isEmpty()}" class="muted">Chưa có đánh giá.</p>
+</section>
+
+<script>
+document.querySelectorAll('.poi-audio').forEach(function(audio){
+  audio.addEventListener('play', function(){
+    const poiId = audio.dataset.poiId;
+    if(!poiId) return;
+    fetch('/api/log',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({poiId:Number(poiId),deviceId:localStorage.getItem('versaDeviceId')||'',languageCode:audio.dataset.lang||'vi',triggerType:'web-play',listenDuration:0})}).catch(()=>{});
+  });
+});
+const ttsPlay=document.getElementById('ttsPlay');
+const ttsStop=document.getElementById('ttsStop');
+if(ttsPlay && 'speechSynthesis' in window){
+  ttsPlay.addEventListener('click',function(){
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(ttsPlay.dataset.text||'');
+    const lang=ttsPlay.dataset.lang||'vi';
+    u.lang=lang==='en'?'en-US':lang==='ja'?'ja-JP':lang==='ko'?'ko-KR':lang==='zh'?'zh-CN':lang==='fr'?'fr-FR':'vi-VN';
+    u.rate=0.95;
+    speechSynthesis.speak(u);
+    const poiId=ttsPlay.dataset.poiId;
+    if(poiId) fetch('/api/log',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({poiId:Number(poiId),deviceId:localStorage.getItem('versaDeviceId')||'',languageCode:lang,triggerType:'tts-play',listenDuration:0})}).catch(()=>{});
+  });
+  if(ttsStop) ttsStop.addEventListener('click',function(){speechSynthesis.cancel();});
+}else if(ttsPlay){
+  ttsPlay.disabled=true;
+  ttsPlay.textContent='Trình duyệt không hỗ trợ đọc thuyết minh';
+}
+</script>
+</body></html>

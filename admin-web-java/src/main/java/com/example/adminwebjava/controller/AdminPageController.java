@@ -44,7 +44,20 @@ public class AdminPageController {
     @GetMapping({"/admin/analytics","/analytics"}) public String analytics(Model m){m.addAttribute("totalPois",0);m.addAttribute("totalLogs",0);m.addAttribute("topPois",List.of());return "Analytics/index";}
     @GetMapping({"/admin/activity-log","/admin/ActivityLog","/usage-history"}) public String activity(Model m){m.addAttribute("logs",List.of());m.addAttribute("currentPage",1);m.addAttribute("totalPages",1);m.addAttribute("searchString","");return "ActivityLog/index";}
     @GetMapping({"/admin/visitor-traffic","/admin/VisitorTraffic"}) public String visitorTraffic(){return "VisitorTraffic/Index";}
-    @GetMapping({"/admin/approval/poi-pending","/admin/Approval/PoiPending"}) public String approval(Model m){m.addAttribute("title","Duyệt POI");m.addAttribute("model",List.of());return "Approval/PoiPending";}
+    @GetMapping({"/admin/approval/poi-pending","/admin/Approval/PoiPending"})
+    public String approval(Model m){
+        List<Map<String,Object>> pois = jdbc.queryForList("SELECT p.Id AS id, p.Latitude AS latitude, p.Longitude AS longitude, p.Radius AS radius, p.AdminNote AS adminNote FROM pois p WHERE lower(COALESCE(p.Status,''))='pending' ORDER BY p.Id DESC");
+        for (Map<String,Object> poi : pois) {
+            long id = ((Number) poi.get("id")).longValue();
+            List<Map<String,Object>> translations = jdbc.queryForList("SELECT Id AS id, PoiId AS poiId, LanguageCode AS languageCode, Name AS name, ShortDescription AS shortDescription, FullDescription AS fullDescription FROM poi_translations WHERE PoiId=? ORDER BY CASE WHEN lower(LanguageCode)='vi' THEN 0 ELSE 1 END, LanguageCode", id);
+            poi.put("translations", translations);
+            if (!translations.isEmpty()) poi.put("name", translations.get(0).get("name"));
+            else poi.put("name", "POI #" + id);
+        }
+        m.addAttribute("title","Duyệt POI");
+        m.addAttribute("model",pois);
+        return "Approval/PoiPending";
+    }
     @GetMapping({"/admin/owners","/admin/OwnerAdmin"}) public String owners(Model m){m.addAttribute("ownerProfiles",List.of());m.addAttribute("totalAssignedPois",0);return "OwnerAdmin/Index";}
     @GetMapping({"/admin/owners/requests","/admin/OwnerAdmin/Requests"}) public String ownerRequests(Model m){m.addAttribute("requests",List.of());return "OwnerAdmin/Requests";}
     @GetMapping({"/admin/payment","/admin/Payment"}) public String payment(Model m){m.addAttribute("paymentTransactions",List.of());m.addAttribute("totalRevenue",0);m.addAttribute("pendingCount",0);return "Payment/Index";}

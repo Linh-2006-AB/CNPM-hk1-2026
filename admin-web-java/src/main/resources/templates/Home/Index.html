@@ -82,7 +82,6 @@ a.metric-card:hover,a.quick-card:hover{transform:translateY(-3px);border-color:r
 <div class="section-heading"><div><h2>2. Người đang truy cập trong LAN</h2><p>Số liệu lấy trực tiếp từ các phiên trình duyệt truy cập máy chủ Spring Boot. Phiên được xem là online nếu có hoạt động trong 5 phút gần nhất.</p></div><a href="/admin/visitor-traffic" class="btn btn-primary btn-sm"><i class="fa-solid fa-users-viewfinder"></i>Xem chi tiết</a></div>
 <section class="overview-grid" id="lanTrafficDashboard">
 <a class="metric-card" href="/admin/visitor-traffic"><span class="metric-top"><span class="metric-icon"><i class="fa-solid fa-wifi"></i></span><span class="metric-pill">LAN · 5 phút</span></span><span class="metric-value" id="lanOnlineIps">--</span><span class="metric-label">Thiết bị/IP LAN đang truy cập</span></a>
-<a class="metric-card" href="/admin/visitor-traffic"><span class="metric-top"><span class="metric-icon"><i class="fa-solid fa-user-group"></i></span><span class="metric-pill">Phiên</span></span><span class="metric-value" id="lanOnlineSessions">--</span><span class="metric-label">Phiên khách đang hoạt động trong LAN</span></a>
 <a class="metric-card" href="/admin/visitor-traffic"><span class="metric-top"><span class="metric-icon"><i class="fa-solid fa-calendar-day"></i></span><span class="metric-pill">Hôm nay</span></span><span class="metric-value" id="lanTodayIps">--</span><span class="metric-label">Thiết bị/IP LAN đã truy cập hôm nay</span></a>
 <a class="metric-card" href="/admin/visitor-traffic"><span class="metric-top"><span class="metric-icon"><i class="fa-solid fa-globe"></i></span><span class="metric-pill">Tất cả</span></span><span class="metric-value" id="todayIps">--</span><span class="metric-label">IP khác nhau đã truy cập hôm nay</span></a>
 </section>
@@ -92,10 +91,10 @@ a.metric-card:hover,a.quick-card:hover{transform:translateY(-3px);border-color:r
 <section class="focus-grid">
 <div class="panel-card"><div class="panel-card-header"><div><h3 class="panel-title"><i class="fa-solid fa-list-check"></i>Trạng thái POI</h3><div class="panel-subtitle">Theo dõi POI đã duyệt, chờ duyệt và bị từ chối.</div></div><a href="/admin/approval/poi-pending" class="btn btn-sm">Xem duyệt POI</a></div>
 <div class="panel-card-body"><div class="action-summary-grid">
-<a class="action-box" href="/admin/pois?status=Approved"><strong>94</strong><span>POI đã duyệt</span></a>
-<a class="action-box" href="/admin/pois?status=Pending"><strong>22</strong><span>POI chờ duyệt · 17%</span></a>
-<a class="action-box" href="/admin/pois?status=Rejected"><strong>12</strong><span>POI bị từ chối</span></a>
-</div><div class="health-meter"><div class="health-row"><span>Tỷ lệ POI đã duyệt</span><strong>73%</strong></div><div class="health-bar"><span style="width:73%"></span></div></div></div></div>
+<a class="action-box" href="/admin/pois?status=Approved"><strong id="poiApprovedCount">--</strong><span>POI đã duyệt</span></a>
+<a class="action-box" href="/admin/approval/poi-pending"><strong id="poiPendingCount">--</strong><span>POI chờ duyệt</span></a>
+<a class="action-box" href="/admin/pois?status=Rejected"><strong id="poiRejectedCount">--</strong><span>POI bị từ chối</span></a>
+</div><div class="health-meter"><div class="health-row"><span>Tỷ lệ POI đã duyệt</span><strong id="poiApprovedRate">--</strong></div><div class="health-bar"><span id="poiApprovedBar" style="width:0%"></span></div></div></div></div>
 <div class="panel-card"><div class="panel-card-header"><div><h3 class="panel-title"><i class="fa-solid fa-bolt"></i>Truy cập nhanh</h3><div class="panel-subtitle">Những chức năng admin thường dùng nhất.</div></div></div>
 <div class="panel-card-body"><div class="quick-list">
 <a class="quick-card" href="/admin/visitor-traffic"><span><i class="fa-solid fa-users-viewfinder"></i>Xem khách theo quán & khung giờ</span><i class="fa-solid fa-arrow-right"></i></a>
@@ -110,7 +109,7 @@ a.metric-card:hover,a.quick-card:hover{transform:translateY(-3px);border-color:r
 <section class="visitor-grid">
 <div class="panel-card"><div class="panel-card-header"><div><h3 class="panel-title"><i class="fa-solid fa-clock"></i>Lượt du khách theo khung giờ hôm nay</h3><div class="panel-subtitle">Check-in là lượt vào; tương tác gồm nghe audio/TTS và hành vi trên web/app.</div></div></div><div class="panel-card-body"><div class="chart-box"><canvas id="visitorTrafficChart"></canvas></div><p class="visitor-note">Hệ thống chưa có nút check-out/rời địa điểm, nên cột “đang hoạt động” được ước tính từ tương tác trong 30 phút gần nhất.</p></div></div>
 <div class="panel-card"><div class="panel-card-header"><div><h3 class="panel-title"><i class="fa-solid fa-triangle-exclamation"></i>Cần chú ý</h3><div class="panel-subtitle">Gợi ý vận hành nhanh cho admin.</div></div></div><div class="panel-card-body"><div class="alert-stack">
-<a class="admin-alert warning" href="/admin/approval/poi-pending"><span class="admin-alert-icon"><i class="fa-solid fa-clock"></i></span><span><strong>22 POI đang chờ duyệt</strong><span>Cần kiểm tra và xử lý nội dung mới.</span></span></a>
+<a class="admin-alert warning" href="/admin/approval/poi-pending"><span class="admin-alert-icon"><i class="fa-solid fa-clock"></i></span><span><strong><span id="poiPendingAlertCount">--</span> POI đang chờ duyệt</strong><span id="poiPendingAlertText">Đang kiểm tra dữ liệu...</span></span></a>
 <a class="admin-alert success" href="/admin"><span class="admin-alert-icon"><i class="fa-solid fa-circle-check"></i></span><span><strong>Hệ thống hoạt động ổn định</strong><span>Dữ liệu tương tác hôm nay đang tăng.</span></span></a>
 <a class="admin-alert info" href="/admin/api/audio-history" target="_blank"><span class="admin-alert-icon"><i class="fa-solid fa-chart-line"></i></span><span><strong>Audio được nghe nhiều</strong><span>Có 3.842 lượt phát được ghi nhận.</span></span></a>
 </div></div></div>
@@ -171,7 +170,6 @@ async function loadLanTraffic(){
     const stats = await statsRes.json();
     const visitors = await visitorsRes.json();
     document.getElementById('lanOnlineIps').textContent = Number(stats.lanOnlineIps ?? 0).toLocaleString('vi-VN');
-    document.getElementById('lanOnlineSessions').textContent = Number(stats.lanOnlineSessions ?? 0).toLocaleString('vi-VN');
     document.getElementById('lanTodayIps').textContent = Number(stats.lanTodayIps ?? 0).toLocaleString('vi-VN');
     document.getElementById('todayIps').textContent = Number(stats.todayIps ?? 0).toLocaleString('vi-VN');
     document.getElementById('lanServerHint').textContent = 'Máy chủ: ' + (stats.serverIpHint || '--');
@@ -259,6 +257,24 @@ document.getElementById('btnLocateDashboard').addEventListener('click',function(
 });
 setTimeout(()=>map.invalidateSize(),350);
 window.addEventListener('resize',()=>setTimeout(()=>map.invalidateSize(),150));
+
+async function loadPoiSummary(){
+  try{
+    const r=await fetch('/admin/api/poi-summary',{cache:'no-store'});
+    const d=await r.json();
+    const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+    set('poiApprovedCount',d.approved ?? 0);
+    set('poiPendingCount',d.pending ?? 0);
+    set('poiRejectedCount',d.rejected ?? 0);
+    set('poiPendingAlertCount',d.pending ?? 0);
+    set('poiPendingAlertText',(d.pending ?? 0)>0?'Cần kiểm tra và xử lý nội dung mới.':'Hiện không có POI nào đang chờ duyệt.');
+    const rate=(d.total ?? 0)>0?Math.round((d.approved*100)/d.total):0;
+    set('poiApprovedRate',rate+'%');
+    const bar=document.getElementById('poiApprovedBar'); if(bar) bar.style.width=rate+'%';
+  }catch(e){ console.warn('Không tải được thống kê POI',e); }
+}
+loadPoiSummary();
+setInterval(loadPoiSummary,30000);
 </script>
 </body>
 </html>

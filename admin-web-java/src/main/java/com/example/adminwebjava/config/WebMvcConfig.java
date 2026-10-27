@@ -3,6 +3,7 @@ package com.example.adminwebjava.config;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import com.example.adminwebjava.services.LanVisitorTrackingService;
 
 @Configuration
@@ -13,6 +14,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
         this.authInterceptor = authInterceptor;
         this.lanVisitorTrackingService = lanVisitorTrackingService;
     }
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/uploads/**")
+                .addResourceLocations("file:./uploads/", "classpath:/static/uploads/");
+    }
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) { registry.addInterceptor(lanVisitorTrackingService);
         registry.addInterceptor(authInterceptor); }

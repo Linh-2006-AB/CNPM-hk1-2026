@@ -14,7 +14,6 @@ import java.util.Map;
 
 @Service
 public class LanVisitorTrackingService implements HandlerInterceptor {
-    private static final int DISPLAY_OFFSET = 0;
     private static final int ONLINE_MINUTES = 5;
     private final JdbcTemplate jdbc;
 
@@ -64,22 +63,14 @@ public class LanVisitorTrackingService implements HandlerInterceptor {
         String since = "-" + ONLINE_MINUTES + " minutes";
         String today = "date('now','localtime')";
 
-        long onlineSessions = count("SELECT COUNT(*) FROM web_visit_sessions WHERE LastSeen >= datetime('now', ?)", since);
         long onlineIps = count("SELECT COUNT(DISTINCT IpAddress) FROM web_visit_sessions WHERE LastSeen >= datetime('now', ?)", since);
-        long todaySessions = count("SELECT COUNT(*) FROM web_visit_sessions WHERE date(FirstSeen, 'localtime') = " + today);
         long todayIps = count("SELECT COUNT(DISTINCT IpAddress) FROM web_visit_sessions WHERE date(FirstSeen, 'localtime') = " + today);
-        long lanOnlineSessions = count("SELECT COUNT(*) FROM web_visit_sessions WHERE LastSeen >= datetime('now', ?) AND " + privateIpSql(), since);
         long lanOnlineIps = count("SELECT COUNT(DISTINCT IpAddress) FROM web_visit_sessions WHERE LastSeen >= datetime('now', ?) AND " + privateIpSql(), since);
-        long lanTodaySessions = count("SELECT COUNT(*) FROM web_visit_sessions WHERE date(FirstSeen, 'localtime') = " + today + " AND " + privateIpSql());
         long lanTodayIps = count("SELECT COUNT(DISTINCT IpAddress) FROM web_visit_sessions WHERE date(FirstSeen, 'localtime') = " + today + " AND " + privateIpSql());
 
-        result.put("onlineSessions", onlineSessions);
         result.put("onlineIps", onlineIps);
-        result.put("todaySessions", todaySessions);
         result.put("todayIps", todayIps);
-        result.put("lanOnlineSessions", lanOnlineSessions + DISPLAY_OFFSET);
-        result.put("lanOnlineIps", lanOnlineIps + DISPLAY_OFFSET);
-        result.put("lanTodaySessions", lanTodaySessions);
+        result.put("lanOnlineIps", lanOnlineIps);
         result.put("lanTodayIps", lanTodayIps);
         result.put("onlineMinutes", ONLINE_MINUTES);
         result.put("serverIpHint", localServerAddressHint());

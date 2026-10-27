@@ -15,7 +15,16 @@ public class TourGuideService {
         return jdbc.queryForList(sql, lang, status == null ? "" : status, status == null ? "" : status, k, "%"+k+"%");
     }
     public Map<String,Object> findPoi(long id, String lang) {
-        List<Map<String,Object>> rows = jdbc.queryForList("SELECT p.*, pt.Name AS name, pt.ShortDescription AS shortDescription, pt.FullDescription AS fullDescription, pt.AudioUrl AS audioUrl, pt.VideoUrl AS videoUrl FROM pois p LEFT JOIN poi_translations pt ON pt.PoiId=p.Id AND pt.LanguageCode=? WHERE p.Id=?", lang, id);
+        List<Map<String,Object>> rows = jdbc.queryForList("SELECT p.*," +
+                " COALESCE(pt.Name, vt.Name, '(Chưa có tên địa điểm)') AS name," +
+                " COALESCE(pt.ShortDescription, vt.ShortDescription, '') AS shortDescription," +
+                " COALESCE(pt.FullDescription, vt.FullDescription, '') AS fullDescription," +
+                " COALESCE(pt.AudioUrl, vt.AudioUrl) AS audioUrl," +
+                " COALESCE(pt.VideoUrl, vt.VideoUrl) AS videoUrl" +
+                " FROM pois p" +
+                " LEFT JOIN poi_translations pt ON pt.PoiId=p.Id AND lower(pt.LanguageCode)=lower(?)" +
+                " LEFT JOIN poi_translations vt ON vt.PoiId=p.Id AND lower(vt.LanguageCode)='vi'" +
+                " WHERE p.Id=?", lang, id);
         return rows.isEmpty() ? null : rows.get(0);
     }
     public List<Map<String,Object>> findCategories(String lang) {

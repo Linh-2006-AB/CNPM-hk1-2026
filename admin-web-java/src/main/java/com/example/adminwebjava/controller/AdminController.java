@@ -13,6 +13,7 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -460,6 +461,33 @@ public class AdminController {
         Long id = jdbc.queryForObject("SELECT last_insert_rowid()", Long.class);
         log("INSERT", "sync_versions", id, "Tạo phiên bản đồng bộ " + version);
         return Map.of("success", true, "id", id == null ? 0 : id, "versionNumber", version);
+    }
+
+    @PostMapping("/approval/poi-approve/{id}")
+    public String approvePoi(@PathVariable long id) {
+        jdbc.update("UPDATE pois SET Status='Approved', AdminNote=? WHERE Id=? AND lower(COALESCE(Status,''))='pending'", "Đã được Admin phê duyệt.", id);
+        return "redirect:/admin/approval/poi-pending";
+    }
+
+    @PostMapping("/approval/poi-reject/{id}")
+    public String rejectPoi(@PathVariable long id, @RequestParam(defaultValue="") String adminNote) {
+        jdbc.update("UPDATE pois SET Status='Rejected', AdminNote=? WHERE Id=? AND lower(COALESCE(Status,''))='pending'", adminNote, id);
+        return "redirect:/admin/approval/poi-pending";
+    }
+
+    @ResponseBody @GetMapping("/api/poi-summary")
+    public Map<String,Object> poiSummary() {
+        Map<String,Object> r = new LinkedHashMap<>();
+        r.put("total", countValue("SELECT COUNT(*) FROM pois"));
+        r.put("approved", countValue("SELECT COUNT(*) FROM pois WHERE lower(COALESCE(Status,''))='approved'"));
+        r.put("pending", countValue("SELECT COUNT(*) FROM pois WHERE lower(COALESCE(Status,''))='pending'"));
+        r.put("rejected", countValue("SELECT COUNT(*) FROM pois WHERE lower(COALESCE(Status,''))='rejected'"));
+        return r;
+    }
+
+    private long countValue(String sql) {
+        Long n = jdbc.queryForObject(sql, Long.class);
+        return n == null ? 0L : n;
     }
 
     @ResponseBody @GetMapping("/api/lan-traffic")
