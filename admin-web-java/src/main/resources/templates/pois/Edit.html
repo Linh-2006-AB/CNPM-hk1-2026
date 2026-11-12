@@ -296,7 +296,7 @@ code{color:#9ec1ff}
 <div class="form-group"><label class="form-label">Trạng thái</label><select class="form-control" name="Status"><option value="Pending">Pending</option><option value="Approved" selected>Approved</option><option value="Rejected">Rejected</option></select></div>
 <div class="form-group full"><label class="form-label">Ảnh bìa (Thumbnail)</label><div style="margin-bottom:12px;"><div style="height:120px;max-width:220px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(135deg,#24304a,#101727);display:grid;place-items:center;color:var(--text2);"><i class="fa-solid fa-image" style="font-size:28px"></i></div></div><input class="form-control" type="file" name="coverImage" accept="image/*"><small style="color:var(--text2);font-size:12px;margin-top:6px;display:block;">Để trống nếu không muốn thay đổi ảnh hiện tại.</small></div>
 </div>
-<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:24px;"><button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Cập nhật POI</button><a href="#" class="btn btn-secondary"><i class="fa-solid fa-language"></i> Cập nhật bản dịch</a><a href="Index.html" class="btn btn-secondary">Quay lại</a></div>
+<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:24px;"><button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Cập nhật POI</button><a id="translationLink" href="/admin/pois/translations" class="btn btn-secondary"><i class="fa-solid fa-language"></i> Cập nhật bản dịch</a><a href="/admin/pois" class="btn btn-secondary">Quay lại</a></div>
 </form>
 </div>
 
@@ -690,6 +690,26 @@ code{color:#9ec1ff}
    if(!rawText){alert('Vui lòng nhập mô tả thô trước khi tối ưu.');return;}
    btn.disabled=true; btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Đang tối ưu...';
    setTimeout(()=>{shortEl.value=shortEl.value||'Nội dung được tối ưu ở bản demo HTML.'; fullEl.value=fullEl.value||'Bản demo HTML không gọi API server. Khi tích hợp backend, giữ endpoint /PoiAi/OptimizeContent.'; btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-wand-magic-sparkles"></i> AI Tối ưu nội dung';},700);
+ });
+})();
+</script>
+<script>
+(function(){
+ const id=(location.pathname.match(/\/admin\/pois\/(\d+)\/edit/)||[])[1];
+ if(!id)return;
+ const lat=document.getElementById('Latitude'), lng=document.getElementById('Longitude'), radius=document.getElementById('Radius');
+ const status=document.querySelector('[name="Status"]');
+ const form=document.querySelector('form[action="#"]');
+ const link=document.getElementById('translationLink'); if(link) link.href='/admin/pois/'+id+'/translations';
+ fetch('/admin/api/pois/'+id+'?lang=vi').then(r=>{if(!r.ok)throw new Error('Không tìm thấy POI');return r.json();}).then(p=>{
+   document.querySelector('.page-title').textContent='Chỉnh sửa thông số POI #'+p.id;
+   lat.value=p.latitude??''; lng.value=p.longitude??''; radius.value=p.radius??50; if(status)status.value=p.status||'Pending';
+   if(typeof window.setLocation==='function' && p.latitude!=null && p.longitude!=null) window.setLocation(Number(p.latitude),Number(p.longitude),{zoom:16});
+ }).catch(e=>console.error(e));
+ form?.addEventListener('submit',async e=>{
+   e.preventDefault();
+   const body={latitude:Number(lat.value),longitude:Number(lng.value),radius:Number(radius.value),status:status?.value||'Pending',adminNote:'',coverImageUrl:''};
+   try{const r=await fetch('/admin/api/pois/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.message||'Cập nhật thất bại');alert('Đã cập nhật POI #'+id);location.href='/admin/pois';}catch(err){alert(err.message||'Không thể cập nhật POI.');}
  });
 })();
 </script>

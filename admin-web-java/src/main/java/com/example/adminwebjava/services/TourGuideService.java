@@ -10,7 +10,7 @@ public class TourGuideService {
     public TourGuideService(JdbcTemplate jdbc) { this.jdbc = jdbc; }
 
     public List<Map<String,Object>> findPois(String lang, String keyword, String status) {
-        String sql = "SELECT p.Id AS id, p.Status AS status, COALESCE(pt.Name, '') AS name, COALESCE(pt.ShortDescription, '') AS shortDescription, p.CoverImageUrl AS imageUrl FROM pois p LEFT JOIN poi_translations pt ON pt.PoiId=p.Id AND pt.LanguageCode=? WHERE (?='' OR p.Status=?) AND (?='' OR LOWER(COALESCE(pt.Name,'')) LIKE LOWER(?)) ORDER BY p.Id DESC";
+        String sql = "SELECT p.Id AS id, p.Status AS status, p.Latitude AS latitude, p.Longitude AS longitude, p.Radius AS radius, p.CreatedAt AS createdAt, p.CoverImageUrl AS coverImageUrl, COALESCE(pt.Name, '') AS name, COALESCE(pt.ShortDescription, '') AS shortDescription, (SELECT COUNT(*) FROM poi_translations t2 WHERE t2.PoiId=p.Id) AS translationCount FROM pois p LEFT JOIN poi_translations pt ON pt.PoiId=p.Id AND lower(pt.LanguageCode)=lower(?) WHERE (?='' OR lower(p.Status)=lower(?)) AND (?='' OR LOWER(COALESCE(pt.Name,'')) LIKE LOWER(?)) ORDER BY p.Id DESC";
         String k = keyword == null ? "" : keyword.trim();
         return jdbc.queryForList(sql, lang, status == null ? "" : status, status == null ? "" : status, k, "%"+k+"%");
     }

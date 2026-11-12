@@ -21,6 +21,19 @@ public class AdminPageController {
     @GetMapping({"/admin/pois/create","/pois/create"}) public String poiCreate(Model m){m.addAttribute("poi",new Poi());return "pois/Create";}
     @GetMapping({"/admin/pois/{id}/edit","/pois/{id}/edit"}) public String poiEdit(@PathVariable long id,Model m){m.addAttribute("poiId",id);return "pois/Edit";}
     @GetMapping({"/admin/pois/{id}/delete","/pois/{id}/delete"}) public String poiDelete(@PathVariable long id,Model m){m.addAttribute("poiId",id);return "pois/Delete";}
+    @GetMapping({"/admin/pois/{id}/translations","/pois/{id}/translations"}) public String poiTranslations(@PathVariable long id, Model m){
+        Map<String,Object> poi = jdbc.queryForMap("SELECT p.Id AS id, COALESCE(pt.Name, 'POI #' || p.Id) AS name FROM pois p LEFT JOIN poi_translations pt ON pt.PoiId=p.Id AND lower(pt.LanguageCode)='vi' WHERE p.Id=? LIMIT 1", id);
+        m.addAttribute("poi", poi);
+        m.addAttribute("translations", jdbc.queryForList("SELECT Id AS id, LanguageCode AS languageCode, Name AS name, ShortDescription AS shortDescription, FullDescription AS fullDescription, TtsScript AS ttsScript, AudioUrl AS audioUrl, VideoUrl AS videoUrl FROM poi_translations WHERE PoiId=? ORDER BY CASE WHEN lower(LanguageCode)='vi' THEN 0 ELSE 1 END, LanguageCode", id));
+        return "PoiTranslation/Manage";
+    }
+    @GetMapping({"/admin/pois/{id}/media","/pois/{id}/media"}) public String poiMedia(@PathVariable long id, Model m){
+        Map<String,Object> poi = jdbc.queryForMap("SELECT p.Id AS id, COALESCE(pt.Name, 'POI #' || p.Id) AS name FROM pois p LEFT JOIN poi_translations pt ON pt.PoiId=p.Id AND lower(pt.LanguageCode)='vi' WHERE p.Id=? LIMIT 1", id);
+        m.addAttribute("poi", poi);
+        m.addAttribute("mediaAssets", jdbc.queryForList("SELECT Id AS id, MediaType AS mediaType, MediaUrl AS mediaUrl, SortOrder AS sortOrder FROM media_assets WHERE PoiId=? ORDER BY SortOrder, Id", id));
+        return "Media/Poi";
+    }
+
     @GetMapping({"/admin/tours/create","/tours/create"}) public String tourCreate(){return "Tour/Create";}
     @GetMapping({"/admin/tours/{id}/edit","/tours/{id}/edit"}) public String tourEdit(@PathVariable long id,Model m){m.addAttribute("tourId",id);return "Tour/Edit";}
     @GetMapping({"/admin/tours/{id}/manage-pois","/tours/{id}/manage-pois"}) public String tourManage(@PathVariable long id,Model m){m.addAttribute("tourId",id);m.addAttribute("pois",service.findPois("vi","",""));return "Tour/ManagePois";}

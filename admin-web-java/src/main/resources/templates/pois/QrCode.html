@@ -6,7 +6,7 @@
     th:text="${poiName}">Tên địa điểm</h2><p class="qr-desc">Quét mã để mở trang chi tiết POI trên web. QR không cộng điểm; điểm chỉ được tính khi du khách check-in bằng GPS tại địa điểm.</p><div class="qr-image-frame"><div id="qrcode"></div></div><div class="qr-info"><div>POI #<span th:text="${poiId}">1</span></div>
 <code class="qr-code-text" id="qrPayload"
       th:text="${qrPayload}"></code>
-    </code></div></section><div class="qr-page-footer"><a href="Index.html" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Quay lại POI</a><button type="button" class="btn btn-danger" id="regenerate"><i class="fa-solid fa-rotate"></i> Tạo lại mã QR</button></div></div></main>
+    </code></div></section><div class="qr-page-footer"><a href="/admin/pois" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Quay lại POI</a><button type="button" class="btn btn-danger" id="regenerate"><i class="fa-solid fa-rotate"></i> Tạo lại mã QR</button></div></div></main>
 <script th:inline="javascript">
     const payload = /*[[${qrPayload}]]*/ '';
     const poiId = /*[[${poiId}]]*/ 0;
@@ -40,11 +40,19 @@
         link.click();
     });
 
-    document.getElementById('regenerate').addEventListener('click', () => {
-        alert(
-            'QR token hiện tại được giữ nguyên trong SQLite. ' +
-            'Tải lại trang nếu muốn tạo lại ảnh QR từ token hiện tại.'
-        );
+    document.getElementById('regenerate').addEventListener('click', async () => {
+        if (!confirm('Tạo token QR mới cho POI này? Mã QR cũ sẽ không còn hoạt động.')) return;
+        const button = document.getElementById('regenerate');
+        button.disabled = true;
+        try {
+            const response = await fetch('/admin/api/pois/' + poiId + '/qr/regenerate', { method: 'POST' });
+            const data = await response.json();
+            if (!response.ok || !data.success) throw new Error(data.message || 'Không thể tạo lại QR.');
+            location.reload();
+        } catch (error) {
+            button.disabled = false;
+            alert(error.message || 'Không thể tạo lại QR.');
+        }
     });
 </script>
 </body>

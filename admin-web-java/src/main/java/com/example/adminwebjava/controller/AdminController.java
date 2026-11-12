@@ -134,6 +134,28 @@ public class AdminController {
     }
 
     @ResponseBody
+    @GetMapping(value = "/api/pois/export", produces = "text/csv;charset=UTF-8")
+    public ResponseEntity<String> exportPoisCsv(@RequestParam(defaultValue = "vi") String lang) {
+        List<Map<String,Object>> rows = service.findPois(lang, "", "");
+        StringBuilder csv = new StringBuilder("POI ID,Ten,Latitude,Longitude,Radius,Status,CreatedAt\n");
+        for (Map<String,Object> row : rows) {
+            csv.append(csvCell(row.get("id"))).append(',')
+               .append(csvCell(row.get("name"))).append(',')
+               .append(csvCell(row.get("latitude"))).append(',')
+               .append(csvCell(row.get("longitude"))).append(',')
+               .append(csvCell(row.get("radius"))).append(',')
+               .append(csvCell(row.get("status"))).append(',')
+               .append(csvCell(row.get("createdAt"))).append('\n');
+        }
+        return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=pois.csv").body("\uFEFF" + csv);
+    }
+
+    private String csvCell(Object value) {
+        String text = value == null ? "" : String.valueOf(value);
+        return "\"" + text.replace("\"", "\"\"") + "\"";
+    }
+
+    @ResponseBody
     @PostMapping("/api/pois/{id}/status")
     public Map<String, Object> updatePoiStatus(@PathVariable long id, @RequestBody Map<String, String> body) {
         String status = required(body, "status");
@@ -141,6 +163,23 @@ public class AdminController {
         if (updated == 0) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy POI " + id);
         log("UPDATE", "pois", id, "Cập nhật trạng thái POI thành " + status);
         return Map.of("success", true, "id", id, "status", status);
+    }
+
+    @ResponseBody
+    @DeleteMapping("/api/pois/{id}")
+    @Transactional
+    public Map<String, Object> deletePoi(@PathVariable long id) {
+        Integer exists = jdbc.query("SELECT Id FROM pois WHERE Id=?", rs -> rs.next() ? rs.getInt(1) : null, id);
+        if (exists == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy POI " + id);
+        // Xóa các quan hệ trực tiếp trước khi xóa POI. Các bảng nghiệp vụ có thể không có bản ghi nên dùng DELETE an toàn.
+        String[] relationTables = {"poi_owner_requests","tourist_bookmarks","tourist_poi_discoveries","visitor_playback_logs","poi_reviews","media_tasks","media_assets","poi_categories","poi_translations","beacons","owner_menu_items"};
+        for (String table : relationTables) {
+            try { jdbc.update("DELETE FROM " + table + " WHERE PoiId=?", id); } catch (Exception ignored) { }
+        }
+        jdbc.update("DELETE FROM tour_pois WHERE PoiId=?", id);
+        jdbc.update("DELETE FROM pois WHERE Id=?", id);
+        log("DELETE", "pois", id, "Xóa POI và dữ liệu liên quan");
+        return Map.of("success", true, "id", id);
     }
 
     @ResponseBody
@@ -1078,7 +1117,17 @@ public class AdminController {
         return Map.of("success", true, "count", rows.size(), "data", rows, "limit", safeLimit, "offset", safeOffset);
     }
 
-@GetMapping(value = "/api/pois/{id}/qr", produces = MediaType.IMAGE_PNG_VALUE)
+@ResponseBody
+    @PostMapping("/api/pois/{id}/qr/regenerate")
+    public Map<String,Object> regeneratePoiQr(@PathVariable long id) {
+        String token = UUID.randomUUID().toString().replace("-", "");
+        int changed = jdbc.update("UPDATE pois SET QrCodeToken=? WHERE Id=?", token, id);
+        if (changed == 0) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy POI " + id);
+        log("UPDATE", "pois", id, "Tạo lại mã QR");
+        return Map.of("success", true, "id", id, "token", token);
+    }
+
+    @GetMapping(value = "/api/pois/{id}/qr", produces = MediaType.IMAGE_PNG_VALUE)
 @ResponseBody
 public ResponseEntity<byte[]> getPoiQr(@PathVariable long id) {
     try {

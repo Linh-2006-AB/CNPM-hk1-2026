@@ -28,23 +28,50 @@ public class PoiController {
         this.jdbc = jdbc;
     }
 
-    @GetMapping("/pois/qr/{token}")
-    public String openPoiByQr(@PathVariable String token) {
-        Long poiId = jdbc.query(
-            "SELECT Id FROM pois WHERE QrCodeToken = ? " +
-         "AND lower(Status) = 'approved' LIMIT 1",
-            rs -> rs.next() ? rs.getLong("Id") : null,
-            token
-        );
+@GetMapping("/pois/qr/{token}")
+public String openPoiByQr(
+        @PathVariable String token,
+        @RequestHeader(
+            value = "Accept-Language",
+            required = false
+        ) String acceptLanguage) {
 
-        if (poiId == null) {
-            throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "Mã QR không hợp lệ hoặc địa điểm chưa được duyệt"
-            );
+    Long poiId = jdbc.query(
+        "SELECT Id FROM pois WHERE QrCodeToken = ? " +
+        "AND lower(Status) = 'approved' LIMIT 1",
+        rs -> rs.next() ? rs.getLong("Id") : null,
+        token
+    );
+
+    if (poiId == null) {
+        throw new ResponseStatusException(
+            HttpStatus.NOT_FOUND,
+            "Mã QR không hợp lệ hoặc địa điểm chưa được duyệt"
+        );
     }
 
-    return "redirect:/pois/" + poiId;
+    // Chọn ngôn ngữ theo cài đặt trình duyệt của khách.
+    String lang = "vi";
+
+    if (acceptLanguage != null && !acceptLanguage.isBlank()) {
+        String browserLang = acceptLanguage
+                .split(",")[0]
+                .split(";")[0]
+                .trim()
+                .toLowerCase();
+
+        if (browserLang.startsWith("en")) {
+            lang = "en";
+        } else if (browserLang.startsWith("zh")) {
+            lang = "zh";
+        } else if (browserLang.startsWith("ja")) {
+            lang = "ja";
+        } else if (browserLang.startsWith("ko")) {
+            lang = "ko";
+        }
+    }
+
+    return "redirect:/pois/" + poiId + "?lang=" + lang;
 }
 
 
